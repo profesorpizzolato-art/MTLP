@@ -1,0 +1,19 @@
+---
+
+## ⚙️ Archivo de Configuración Recomendado (`.gitignore`)
+
+```text
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Configuración local de Streamlit
+.streamlit/
+
+# Variables de entorno
+.env
+
+# Archivos específicos del sistema operativo
+.DS_Store
+Thumbs.db
