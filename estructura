@@ -1,0 +1,47 @@
+menfa-manual-laboratorista/
+│
+├── README.md                          # Presentación del manual, objetivos y lineamientos generales
+├── LICENSE                            # Licencia de uso y propiedad intelectual (MENFA)
+├── CONTRIBUTING.md                    # Normas para la colaboración y actualización de contenidos
+│
+├── docs/                              # Documentación completa dividida por partes y capítulos
+│   ├── parte_01_fundamentos_profesionales/
+│   │   ├── 01_el_laboratorista_petrolero.md
+│   │   └── 02_organizacion_del_laboratorio.md
+│   ├── parte_02_fundamentos_tecnicos/
+│   │   ├── 03_fundamentos_de_laboratorio.md
+│   │   └── 04_metrologia_y_calidad.md
+│   ├── parte_03_seguridad_y_ambiente/
+│   │   └── 05_seguridad_higiene_y_ambiente.md
+│   ├── parte_04_muestreo/
+│   │   └── 06_muestreo_de_fluidos_petroleros.md
+│   ├── parte_05_laboratorio_de_crudo/
+│   │   └── 07_caracterizacion_del_petroleo.md
+│   ├── parte_06_laboratorio_de_agua/
+│   │   └── 08_analisis_de_aguas_petroleras.md
+│   ├── parte_07_laboratorio_de_gas/
+│   │   └── 09_analisis_de_gas_natural.md
+│   ├── parte_08_calidad/
+│   │   └── 10_gestion_de_calidad_analitica.md
+│   ├── parte_09_normativa/
+│   │   └── 11_marco_normativo.md
+│   ├── parte_10_procedimientos/
+│   │   └── 12_procedimientos_operativos_estandar.md
+│   ├── parte_11_practica_profesional/
+│   │   └── 13_casos_y_simulaciones.md
+│   └── parte_12_evaluacion/
+│       └── 14_evaluacion_profesional.md
+│
+├── sops/                              # Procedimientos Operativos Estándar (SOP) independientes
+│   └── MENFA-SOP-LAB-001.md           # Formato base y procedimientos normalizados
+│
+├── fichas_tecnicas/                   # Fichas técnicas completas por ensayo
+│   └── template_ficha_tecnica.md
+│
+├── assets/                            # Recursos gráficos, logotipos e imágenes
+│   └── logo_menfa.png
+│
+└── app/                               # Aplicación complementaria (Simulador interactivo en Streamlit)
+    ├── app.py
+    ├── requirements.txt
+    └── utils.py
