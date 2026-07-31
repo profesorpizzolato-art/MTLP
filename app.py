@@ -146,3 +146,37 @@ elif menu == "⚙️ Gestión de SOPs":
    - Comprobar ausencia de pérdidas en el envase contenedor.
    - Registrar temperatura y estado de conservación al ingreso.
         """, language="text")
+# 5. GESTIÓN DE SOPS (Actualización con SOP-CR-004)
+elif menu == "⚙️ Gestión de SOPs":
+    st.markdown('<p class="main-header">⚙️ Procedimientos Operativos Estándar (SOP)</p>', unsafe_allow_html=True)
+    st.write("Seleccione el procedimiento normalizado del sistema de calidad:")
+    
+    sop_code = st.selectbox(
+        "Seleccione SOP:", 
+        [
+            "MENFA-SOP-LAB-001 (Recepción y Criterio de Muestras)", 
+            "MENFA-SOP-LAB-002 (Control de Calidad Analítica)",
+            "SOP-CR-004 (Determinación de Agua en Petróleo Crudo por Destilación - ASTM D4006)"
+        ]
+    )
+    
+    if "001" in sop_code:
+        st.markdown("### MENFA-SOP-LAB-001: Recepción y Verificación de Muestras")
+        st.code("""
+1. OBJETIVO: Establecer los criterios de aceptación y rechazo de muestras de fluidos petroleros.
+2. ALCANCE: Aplicable a todos los laboratorios de campo y plantas de MENFA Capacitaciones.
+3. RESPONSABILIDADES: El Laboratorista Petrolero en turno es responsable de verificar la integridad.
+        """, language="text")
+        
+    elif "SOP-CR-004" in sop_code:
+        st.markdown("### SOP-CR-004: Determinación de Agua en Petróleo Crudo por Destilación")
+        st.markdown("""
+        * **Normativa de Referencia:** ASTM D4006
+        * **Área:** Laboratorio de Crudo
+        * **Objetivo:** Determinar el contenido de agua mediante destilación con solvente y condensación en trampa graduada.
+        
+        #### ⚠️ Puntos Críticos de Seguridad y Operación:
+        1. **Calentamiento controlado:** Evitar incrementos bruscos de temperatura para prevenir ebullición violenta, formación excesiva de espuma o rotura del material de vidrio.
+        2. **Verificación del sistema:** Comprobar ausencia de fugas, correcta circulación del refrigerante en el condensador y limpieza absoluta de la trampa graduada.
+        3. **Lectura de resultados:** Esperar la estabilización completa del sistema y realizar la lectura evitando errores de paralaje sobre el menisco.
+        """)
