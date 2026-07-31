@@ -24,3 +24,29 @@ El contenido abarca desde los fundamentos de la cadena analítica y metrología 
 
 ## 📊 La Cadena Analítica MENFA
 El núcleo metodológico de este manual se rige por el control estricto de cada eslabón del proceso:
+
+---
+
+## 🔒 Integridad de Datos y Responsabilidad
+> **"La calidad del resultado comienza con la calidad de la muestra."**
+
+Todos los procedimientos descriptos en este manual fomentan la cultura de la veracidad, la trazabilidad metrológica y el respeto irrestricto por los límites de competencia técnica del laboratorista.
+
+---
+
+## 📜 Licencia
+Este proyecto es propiedad de **MENFA Capacitaciones**. Todos los derechos reservados sobre los contenidos formativos y soportes documentales.
+⚙️ Archivo de Configuración Recomendado (.gitignore)
+Para mantener el repositorio limpio de archivos temporales o cachés de Python/Streamlit, se sugiere incluir el siguiente .gitignore:
+
+---
+
+## 🔒 Integridad de Datos y Responsabilidad
+> **"La calidad del resultado comienza con la calidad de la muestra."**
+
+Todos los procedimientos descriptos en este manual fomentan la cultura de la veracidad, la trazabilidad metrológica y el respeto irrestricto por los límites de competencia técnica del laboratorista.
+
+---
+
+## 📜 Licencia
+Este proyecto es propiedad de **MENFA Capacitaciones**. Todos los derechos reservados sobre los contenidos formativos y soportes documentales.
