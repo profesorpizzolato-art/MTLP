@@ -19,7 +19,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Menú lateral
-st.sidebar.image("https://via.placeholder.com/150x50.png?text=MENFA+Logo", use_container_width=True)
+st.sidebar.image("https://dummyimage.com/150x50/000/fff&text=MENFA+Logo", use_container_width=True)
 st.sidebar.title("Navegación MENFA")
 menu = st.sidebar.selectbox(
     "Seleccione una sección:",
@@ -45,8 +45,8 @@ if menu == "🏠 Presentación del Manual":
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### 🎯 Objetivo del Sistema")
         st.write("""
-        Este software complementa el soporte documental alojado en el repositorio de GitHub. 
-        Permite consultar la estructura técnica, validar procedimientos estandarizados (SOP) 
+        Este software complementa el soporte documental alojado en el repositorio de GitHub.
+        Permite consultar la estructura técnica, validar procedimientos estandarizados (SOP)
         y realizar simulaciones analíticas rápidas para aplicaciones en terreno y plantas de proceso.
         """)
         st.markdown('</div>', unsafe_allow_html=True)
@@ -89,10 +89,14 @@ elif menu == "📋 Consultas de Fichas Técnicas":
     
     ensayo = st.selectbox(
         "Ensayo disponible:",
-        ["Determinación de Agua y Sedimentos (BS&W - Centrifuga)", "Determinación de Densidad y Gravedad API", "Determinación de Salinidad en Crudo"]
+        [
+            "Determinación de Agua y Sedimentos (BS&W - Centrífuga)",
+            "Determinación de Densidad y Gravedad API",
+            "Determinación de Salinidad en Crudo"
+        ]
     )
     
-    if ensayo == "Determinación de Agua y Sedimentos (BS&W - Centrifuga)":
+    if ensayo == "Determinación de Agua y Sedimentos (BS&W - Centrífuga)":
         st.markdown("### Ficha Técnica: MENFA-FT-LAB-01 (BS&W)")
         st.markdown("""
         * **Objetivo:** Determinar el porcentaje volumétrico de agua y sedimentos en petróleo crudo mediante centrifugación.
@@ -100,6 +104,25 @@ elif menu == "📋 Consultas de Fichas Técnicas":
         * **Equipos:** Centrífuga con calentamiento, tubos cónicos normalizados de 100 mL.
         * **Solventes / Reactivos:** Solvente aromático (xileno) y deemulsificante comercial.
         * **Criterio de Aceptación:** Repetibilidad conforme a especificación de norma para transferencia de custodia.
+        """)
+        
+    elif ensayo == "Determinación de Densidad y Gravedad API":
+        st.markdown("### Ficha Técnica: MENFA-FT-LAB-02 (Densidad y API)")
+        st.markdown("""
+        * **Objetivo:** Determinar la densidad relativa y gravedad API en petróleo crudo y productos líquidos.
+        * **Normativa:** ASTM D1298 (Densímetro de vidrio) / ASTM D5002 (Densímetro digital).
+        * **Equipos:** Hidrómetros/densímetros calibrados, probetas graduadas, baño termostático.
+        * **Criterio de Aceptación:** Corrección de lecturas a temperatura estándar de 60 °F (15,56 °C) según tablas ASTM/API.
+        """)
+        
+    elif ensayo == "Determinación de Salinidad en Crudo":
+        st.markdown("### Ficha Técnica: MENFA-FT-LAB-03 (Salinidad)")
+        st.markdown("""
+        * **Objetivo:** Determinar la concentración aproximada de cloruros (sales) disueltos en petróleo crudo.
+        * **Normativa:** ASTM D3230 (Electrométrico).
+        * **Equipos:** Analizador de salinidad electrométrico, vaso de precipitado, electrodos.
+        * **Solventes / Reactivos:** Mezcla de alcoholes solventes (Metanol/Tolueno) y estándar de calibración.
+        * **Criterio de Aceptación:** Expresión de resultados en libras de sal por mil barriles (PTB) o mg/L de NaCl.
         """)
 
 # 4. SIMULADOR RÁPIDO
@@ -111,7 +134,7 @@ elif menu == "🧮 Simulador Rápido (Crudo y Agua)":
     
     with tab1:
         st.subheader("Conversión de Densidad a Gravedad API")
-        densidad_15 = st.number_input("Densidad relativa a 15.56 °C (60 °F):", min_value=0.500, max_value=1.100, value=0.8550, format="%.4f")
+        densidad_15 = st.number_input("Densidad relativa a 15,56 °C (60 °F):", min_value=0.500, max_value=1.100, value=0.8550, format="%.4f")
         if st.button("Calcular Gravedad API"):
             api = (141.5 / densidad_15) - 131.5
             st.success(f"Gravedad API resultante: **{api:.2f} °API**")
@@ -131,30 +154,12 @@ elif menu == "🧮 Simulador Rápido (Crudo y Agua)":
 # 5. GESTIÓN DE SOPS
 elif menu == "⚙️ Gestión de SOPs":
     st.markdown('<p class="main-header">⚙️ Procedimientos Operativos Estándar (SOP)</p>', unsafe_allow_html=True)
-    st.write("Estructura base de codificación interna para el sistema de calidad del laboratorio:")
-    
-    sop_code = st.selectbox("Seleccione SOP:", ["MENFA-SOP-LAB-001 (Recepción y Criterio de Muestras)", "MENFA-SOP-LAB-002 (Control de Calidad Analítica)"])
-    
-    if "001" in sop_code:
-        st.markdown("### MENFA-SOP-LAB-001: Recepción y Verificación de Muestras")
-        st.code("""
-1. OBJETIVO: Establecer los criterios de aceptación y rechazo de muestras de fluidos petroleros.
-2. ALCANCE: Aplicable a todos los laboratorios de campo y plantas de MENFA Capacitaciones.
-3. RESPONSABILIDADES: El Laboratorista Petrolero en turno es responsable de verificar la integridad.
-4. PASOS DE CONTROL:
-   - Verificar correspondencia entre etiqueta física y hoja de cadena de custodia.
-   - Comprobar ausencia de pérdidas en el envase contenedor.
-   - Registrar temperatura y estado de conservación al ingreso.
-        """, language="text")
-# 5. GESTIÓN DE SOPS (Actualización con SOP-CR-004)
-elif menu == "⚙️ Gestión de SOPs":
-    st.markdown('<p class="main-header">⚙️ Procedimientos Operativos Estándar (SOP)</p>', unsafe_allow_html=True)
     st.write("Seleccione el procedimiento normalizado del sistema de calidad:")
     
     sop_code = st.selectbox(
-        "Seleccione SOP:", 
+        "Seleccione SOP:",
         [
-            "MENFA-SOP-LAB-001 (Recepción y Criterio de Muestras)", 
+            "MENFA-SOP-LAB-001 (Recepción y Criterio de Muestras)",
             "MENFA-SOP-LAB-002 (Control de Calidad Analítica)",
             "SOP-CR-004 (Determinación de Agua en Petróleo Crudo por Destilación - ASTM D4006)"
         ]
@@ -166,8 +171,20 @@ elif menu == "⚙️ Gestión de SOPs":
 1. OBJETIVO: Establecer los criterios de aceptación y rechazo de muestras de fluidos petroleros.
 2. ALCANCE: Aplicable a todos los laboratorios de campo y plantas de MENFA Capacitaciones.
 3. RESPONSABILIDADES: El Laboratorista Petrolero en turno es responsable de verificar la integridad.
+4. PASOS DE CONTROL:
+   - Verificar correspondencia entre etiqueta física y hoja de cadena de custodia.
+   - Comprobar ausencia de pérdidas en el contenedor del envase.
+   - Registrar temperatura y estado de conservación al ingreso.
         """, language="text")
         
+    elif "002" in sop_code:
+        st.markdown("### MENFA-SOP-LAB-002: Control de Calidad Analítica")
+        st.code("""
+1. OBJETIVO: Establecer los alineamientos de aseguramiento de calidad (QA/QC).
+2. ALCANCE: Mediciones cuantitativas en laboratorios de ensayo.
+3. CONTROL: Uso de duplicados, patrones de referencia y cartas de control.
+        """, language="text")
+
     elif "SOP-CR-004" in sop_code:
         st.markdown("### SOP-CR-004: Determinación de Agua en Petróleo Crudo por Destilación")
         st.markdown("""
@@ -176,7 +193,7 @@ elif menu == "⚙️ Gestión de SOPs":
         * **Objetivo:** Determinar el contenido de agua mediante destilación con solvente y condensación en trampa graduada.
         
         #### ⚠️ Puntos Críticos de Seguridad y Operación:
-        1. **Calentamiento controlado:** Evitar incrementos bruscos de temperatura para prevenir ebullición violenta, formación excesiva de espuma o rotura del material de vidrio.
+        1. **Calentamiento controlado:** Evite incrementos bruscos de temperatura para prevenir ebullición violenta, formación excesiva de espuma o rotura del material de vidrio.
         2. **Verificación del sistema:** Comprobar ausencia de fugas, correcta circulación del refrigerante en el condensador y limpieza absoluta de la trampa graduada.
         3. **Lectura de resultados:** Esperar la estabilización completa del sistema y realizar la lectura evitando errores de paralaje sobre el menisco.
         """)
