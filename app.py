@@ -19,7 +19,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Menú lateral
-st.sidebar.image("https://via.placeholder.com/150x50.png?text=MENFA+Logo", use_column_width=True)
+st.sidebar.image("https://via.placeholder.com/150x50.png?text=MENFA+Logo", use_container_width=True)
 st.sidebar.title("Navegación MENFA")
 menu = st.sidebar.selectbox(
     "Seleccione una sección:",
