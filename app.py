@@ -58,29 +58,185 @@ if menu == "🏠 Presentación del Manual":
         st.write("Integridad de datos, trazabilidad metrológica y estricto cumplimiento de normativas HSE.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-# 2. ÍNDICE GENERAL
+# 2. ÍNDICE GENERAL (DESARROLLADO)
 elif menu == "📚 Índice General (Partes I a XII)":
-    st.markdown('<p class="main-header">📚 Estructura General del Manual</p>', unsafe_allow_html=True)
-    
-    partes = {
-        "PARTE I — Fundamentos Profesionales": ["El Laboratorista en el Oil & Gas", "Organización del Laboratorio"],
-        "PARTE II — Fundamentos Técnicos": ["Fundamentos de Laboratorio", "Metrología y Calidad de las Mediciones"],
-        "PARTE III — Seguridad y Ambiente": ["Seguridad, Higiene y Ambiente (HSE)"],
-        "PARTE IV — Muestreo": ["Muestreo de Fluidos Petroleros"],
-        "PARTE V — Laboratorio de Crudo": ["Caracterización del Petróleo y Ensayos Físico-Químicos"],
-        "PARTE VI — Laboratorio de Agua": ["Análisis de Aguas Petroleras (Formación, Inyección, Proceso)"],
-        "PARTE VII — Laboratorio de Gas": ["Análisis de Gas Natural y Cromatografía"],
-        "PARTE VIII — Calidad": ["Gestión de Calidad Analítica (ISO/IEC 17025)"],
-        "PARTE IX — Normativa": ["Marco Normativo (Legislación, API, ASTM, ISO, IRAM)"],
-        "PARTE X — Procedimientos": ["Procedimientos Operativos Estándar (MENFA-SOP-LAB)"],
-        "PARTE XI — Práctica Profesional": ["Casos y Simulaciones de Desviaciones Operativas"],
-        "PARTE XII — Evaluación": ["Evaluación Profesional y Perfil de Egreso"]
-    }
-    
-    for parte, temas in partes.items():
-        with st.expander(parte):
-            for tema in temas:
-                st.write(f"- {tema}")
+    st.markdown('<p class="main-header">📚 Estructura General del Manual Técnico</p>', unsafe_allow_html=True)
+    st.write("Seleccione un módulo temático para explorar su contenido conceptual y técnico detallado:")
+
+    # Selector de módulos
+    modulo = st.selectbox(
+        "Seleccione la Parte del Manual a consultar:",
+        [
+            "PARTE I — Fundamentos Profesionales",
+            "PARTE II — Fundamentos Técnicos",
+            "PARTE III — Seguridad y Ambiente",
+            "PARTE IV — Muestreo",
+            "PARTE V — Laboratorio de Crudo",
+            "PARTE VI — Laboratorio de Agua",
+            "PARTE VII — Laboratorio de Gas",
+            "PARTE VIII — Calidad",
+            "PARTE IX — Normativa",
+            "PARTE X — Procedimientos",
+            "PARTE XI — Práctica Profesional",
+            "PARTE XII — Evaluación"
+        ]
+    )
+
+    st.markdown("---")
+
+    # DESARROLLO DE CADA PARTE
+    if modulo == "PARTE I — Fundamentos Profesionales":
+        st.subheader("PARTE I — Fundamentos Profesionales")
+        
+        with st.expander("1.1 El Laboratorista en el Oil & Gas", expanded=True):
+            st.markdown("""
+            * **Rol estratégico:** El laboratorista no solo ejecuta ensayos, sino que valida datos críticos para la **transferencia de custodia**, el control de procesos en planta y la prevención de daños a instalaciones.
+            * **Responsabilidades clave:**
+                * Garantizar la integridad física y la trazabilidad de las muestras recibidas.
+                * Aplicar normativas vigentes (ASTM, API, ISO) con rigor metrológico.
+                * Reportar desvíos fuera de especificación (Off-Spec) de forma oportuna.
+            * **Perfil profesional:** Dominio de química de fluidos petroleros, ética profesional en la generación de resultados y cultura preventiva de seguridad.
+            """)
+
+        with st.expander("1.2 Organización del Laboratorio"):
+            st.markdown("""
+            * **Distribución de áreas operativas:**
+                * *Área de recepción y log-in:* Registro y almacenamiento temporal de muestras.
+                * *Laboratorio de crudo:* Ensayos de BSW, densidad, salinidad, viscosidad y destilación.
+                * *Laboratorio de agua y gas:* Análisis físico-químico de aguas e interpretación cromatográfica.
+                * *Depósito de reactivos:* Almacenamiento clasificado según matrices de compatibilidad química.
+            * **Flujo de trabajo estandarizado:** Entrada de Muestra $\\rightarrow$ Preparación/Homogeneización $\\rightarrow$ Ensayo $\\rightarrow$ Control QA/QC $\\rightarrow$ Emisión de Certificado Analítico.
+            """)
+
+    elif modulo == "PARTE II — Fundamentos Técnicos":
+        st.subheader("PARTE II — Fundamentos Técnicos")
+        
+        with st.expander("2.1 Fundamentos de Laboratorio", expanded=True):
+            st.markdown("""
+            * **Química de Hidrocarburos:** Clasificación de compuestos (Parafinas, Naftenos, Aromáticos, Asfaltenos - PNAA).
+            * **Operaciones Unitarias:** Extracción, destilación, centrifugación y evaporación aplicadas a matrices de petróleo.
+            * **Manejo de Reactivos:** Preparación de soluciones valoradas, estándares de referencia y manejo seguro de solventes aromáticos (Xileno, Tolueno).
+            """)
+
+        with st.expander("2.2 Metrología y Calidad de las Mediciones"):
+            st.markdown("""
+            * **Conceptos clave:** Precisión vs. Exactitud, Repetibilidad ($r$) y Reproducibilidad ($R$).
+            * **Incertidumbre de la medición:** Identificación de fuentes de error sistemáticas y aleatorias.
+            * **Calibración y Verificación:** Mantenimiento preventivo, ajuste de termómetros, balanzas analíticas y densímetros digitales.
+            """)
+
+    elif modulo == "PARTE III — Seguridad y Ambiente":
+        st.subheader("PARTE III — Seguridad, Higiene y Ambiente (HSE)")
+        
+        with st.expander("3.1 Gestión de Seguridad en el Laboratorio Petrolero", expanded=True):
+            st.markdown("""
+            * **EPP Específico:** Uso obligatorio de antiparras con protección lateral, guantes de nitrilo/neopreno, guardapolvo ignífugo y calzado de seguridad.
+            * **Sistemas de Protección Colectiva:** Cabinas de extracción de gases (fume hoods), duchas y lavaojos de emergencia.
+            * **SGA (Sistema Globalmente Armonizado):** Pictogramas de peligro y lectura correcta de Hojas de Datos de Seguridad (FDS / MSDS).
+            * **Gestión de Residuos:** Clasificación de efluentes líquidos (solventes orgánicos, ácidos, aguas hidrocarburadas) y sólidos contaminados.
+            """)
+
+    elif modulo == "PARTE IV — Muestreo":
+        st.subheader("PARTE IV — Muestreo de Fluidos Petroleros")
+        
+        with st.expander("4.1 Técnicas y Protocolos de Muestreo (ASTM D4057 / D4177)", expanded=True):
+            st.markdown("""
+            * **Tipos de Muestra:** Muestra puntual (top, middle, bottom), muestra corrida, muestra compuesta y muestra continua en línea.
+            * **Equipamiento de Muestreo:** Ladrones de muestra (Bacon Bomb), botellas lastradas, recipientes de presión constante para Gas/GLP.
+            * **Cadena de Custodia:** Documentación obligatoria que garantiza el historial, origen, preservación y sellado inviolable de la muestra.
+            """)
+
+    elif modulo == "PARTE V — Laboratorio de Crudo":
+        st.subheader("PARTE V — Caracterización del Petróleo y Ensayos Físico-Químicos")
+        
+        with st.expander("5.1 Ensayos Estándar para Calidad de Crudo", expanded=True):
+            st.markdown("""
+            * **BS&W (Water & Sediment):** Determinación por centrifugación (ASTM D4007) y por destilación (ASTM D4006).
+            * **Gravedad API y Densidad:** Medición con hidrómetro (ASTM D1298) y densímetro digital de tubo en U oscilante (ASTM D5002).
+            * **Salinidad:** Determinación electrométrica de cloruros (ASTM D3230) expresado en PTB (lbs/1000 bbl).
+            * **Viscosidad Kinemática:** Uso de viscosímetros capilares de vidrio (ASTM D445).
+            * **Punto de Escurrimiento (Pour Point):** Evaluación de temperatura de fluidez (ASTM D97).
+            """)
+
+    elif modulo == "PARTE VI — Laboratorio de Agua":
+        st.subheader("PARTE VI — Análisis de Aguas Petroleras")
+        
+        with st.expander("6.1 Caracterización de Agua de Formación e Inyección", expanded=True):
+            st.markdown("""
+            * **Físico-Química:** pH, conductividad eléctrica, sólidos suspendidos totales (SST) y turbidez.
+            * **Fisiología Iónica (Fórmula de Stiff/Schoeller):** Determinación de Cationes ($Ca^{2+}$, $Mg^{2+}$, $Na^+$, $Fe^{total}$) y Aniones ($Cl^-$, $SO_4^{2-}$, $HCO_3^-$).
+            * **Compatibilidad de Aguas:** Predicción de incrustaciones de carbonatos ($CaCO_3$) y sulfatos ($BaSO_4$) mediante índices de estabilidad (Langelier / Stiff-Davis).
+            * **Aceite en Agua (TOG/FOG):** Extracción por solvente y medición por espectrofotometría IR o UV.
+            """)
+
+    elif modulo == "PARTE VII — Laboratorio de Gas":
+        st.subheader("PARTE VII — Análisis de Gas Natural y Cromatografía")
+        
+        with st.expander("7.1 Ensayos y Caracterización de Gas Natural", expanded=True):
+            st.markdown("""
+            * **Cromatografía en Fase Gaseosa (GC):** Determinación de composición ($C_1$ a $C_6+$), inertes ($N_2$, $CO_2$).
+            * **Propiedades Calculadas (GPA 2172):**Poder Calorífico Superior e Inferior (BTU/cu.ft), Densidad Relativa y Factor de Compresibilidad ($Z$).
+            * **Humedad y Contaminantes:** Punto de rocío de agua y de hidrocarburos, detección de sulfuro de hidrógeno ($H_2S$) y mercaptanos.
+            """)
+
+    elif modulo == "PARTE VIII — Calidad":
+        st.subheader("PARTE VIII — Gestión de Calidad Analítica (ISO/IEC 17025)")
+        
+        with st.expander("8.1 Aseguramiento de la Calidad (QA/QC)", expanded=True):
+            st.markdown("""
+            * **Herramientas de Control Interno:**
+                * Análisis de muestras ciegas, duplicados analíticos y espigas (Spikes).
+                * Cartas de control de Shewhart para monitoreo de tendencia de equipos.
+            * **Trazabilidad:** Uso de Materiales de Referencia Certificados (MRC).
+            * **Auditorías y Ensayos de Aptitud:** Participación en rondas interlaboratorios (Proficiency Testing).
+            """)
+
+    elif modulo == "PARTE IX — Normativa":
+        st.subheader("PARTE IX — Marco Normativo y Estandarización")
+        
+        with st.expander("9.1 Organismos de Normalización en la Industria", expanded=True):
+            st.markdown("""
+            * **ASTM International:** Métodos de ensayo estándar para productos petroleros y lubricantes (Comité D02).
+            * **API MPMS:** *Manual of Petroleum Measurement Standards* (Enfoque en transferencia de custodia y medición).
+            * **ISO e IRAM:** Normas de sistemas de gestión y métodos regionales estandarizados.
+            * **Resoluciones Secretaría de Energía:** Regulaciones locales para especificaciones de venta y transporte de fluidos.
+            """)
+
+    elif modulo == "PARTE X — Procedimientos":
+        st.subheader("PARTE X — Procedimientos Operativos Estándar (SOP)")
+        
+        with st.expander("10.1 Estructura Documental de un SOP (Standard Operating Procedure)", expanded=True):
+            st.markdown("""
+            * **Estructura jerárquica recomendada:**
+                1. *Objetivo y Alcance:* Definición clara de la matriz y el rango de aplicación.
+                2. *Documentos de Referencia:* Normas ASTM/API base.
+                3. *Reactivos y Materiales:* Especificación de pureza de solventes y calibración de instrumental.
+                4. *Procedimiento Paso a Paso:* Instrucciones secuenciales de ensayo.
+                5. *Cálculos y Reporte:* Fórmulas de cálculo de concentración y criterios de redondeo.
+                6. *Criterios de Aceptación/Rechazo:* Tolerancias de repetibilidad según norma.
+            """)
+
+    elif modulo == "PARTE XI — Práctica Profesional":
+        st.subheader("PARTE XI — Casos y Simulaciones de Desviaciones Operativas")
+        
+        with st.expander("11.1 Resolución de Problemas en Planta y Campo", expanded=True):
+            st.markdown("""
+            * **Estudio de Caso 1:** Emulsiones severas (Tight Emulsions) no rotas en la centrifugación de BS&W. Estrategias de ajuste de deemulsificante y temperatura.
+            * **Estudio de Caso 2:** Discrepancias en volumen de transferencia de custodia por error de medición de densidad/temperatura.
+            * **Estudio de Caso 3:** Contaminación de agua de reinyección con sólidos en suspensión (daño de formación por colmatación).
+            """)
+
+    elif modulo == "PARTE XII — Evaluación":
+        st.subheader("PARTE XII — Evaluación Profesional y Perfil de Egreso")
+        
+        with st.expander("12.1 Validación de Competencias del Laboratorista Petrolero", expanded=True):
+            st.markdown("""
+            * **Perfil del Egresado MENFA:** Profesional capacitado para operar de forma autónoma en laboratorios de yacimiento, refinerías y plantas de tratamiento de fluidos.
+            * **Matriz de Competencias:**
+                * Execución analítica bajo normas ASTM/API.
+                * Gestión de la seguridad HSE y manejo de residuos.
+                * Interpretación de resultados para la toma de decisiones operativas en producción.
+            """)
 
 # 3. FICHAS TÉCNICAS
 elif menu == "📋 Consultas de Fichas Técnicas":
