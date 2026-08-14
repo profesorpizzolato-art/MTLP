@@ -105,7 +105,8 @@ if opcion_modulo == "1. Crudo: °API y BS&W":
 elif opcion_modulo == "2. Agua: SST e Incrustaciones":
     st.markdown('<div class="main-header">💧 Módulo de Fisicoquímica de Aguas Petroleras</div>', unsafe_allow_html=True)
     
-    tab1, tab2 = st.tab(["Sólidos Suspendidos Totales (SST)", "Índice de Incrustación (LSI)"])
+  # ✅ Correcto (plural)
+tab1, tab2 = st.tabs(["Sólidos Suspendidos Totales (SST)", "Índice de Incrustación (LSI)"])
     
     with tab1:
         st.subheader("Determinación Gravimétrica de SST (SM 2540 D)")
