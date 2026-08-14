@@ -1,10 +1,10 @@
 import sys
 import os
 
-# Asegura que el directorio raíz esté en el path de Python
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Fuerza a Python a buscar módulos en el directorio raíz del proyecto
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Ahora sí realizas las importaciones locales
+# Ahora realizas las importaciones locales
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -17,6 +17,7 @@ from modules.modulo_emulsiones import calcular_eficiencia_deshidratacion, calcul
 from modules.modulo_viscosidad import calcular_viscosidad_temperatura
 from modules.modulo_salinidad import calcular_ptb_sales, evaluar_conforme_sales
 from modules.modulo_pdf import generar_pdf_protocolo_analitico
+
 # Configuración de página
 st.set_page_config(
     page_title="Simulador interactivo de Laboratorio | IPCL MENFA",
