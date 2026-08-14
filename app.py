@@ -101,7 +101,7 @@ st.sidebar.markdown("""
             <path d="M 45 25 Q 65 55 45 75 Q 25 55 45 25 Z" fill="url(#gradOrange)" />
             <circle cx="45" cy="80" r="4" fill="#FFFFFF" />
             
-            # Texto MENFA y Subtítulo CAPACITACIONES
+            <!-- Texto MENFA y Subtítulo CAPACITACIONES -->
             <text x="95" y="55" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="36" fill="#FFFFFF" letter-spacing="1">MENFA</text>
             <text x="96" y="75" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="12" fill="#F37021" letter-spacing="2.5">CAPACITACIONES</text>
             <text x="96" y="88" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="9" fill="#94A3B8" letter-spacing="1">OIL &amp; GAS TRAINING</text>
