@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL CON LOGO ANIMADO (NATIVO ENLINEA - DISEÑO VERTICAL)
+# BARRA LATERAL CON LOGO ANIMADO (DISEÑO VERTICAL CENTRADO)
 # -----------------------------------------------------------------------------
 st.sidebar.markdown("""
     <style>
@@ -96,7 +96,7 @@ st.sidebar.markdown("""
                 </linearGradient>
                 <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
                 </linearGradient>
             </defs>
 
@@ -112,6 +112,7 @@ st.sidebar.markdown("""
         </svg>
     </div>
 """, unsafe_allow_html=True)
+
 st.sidebar.title("LAB-PETRO MENFA 2.0")
 
 st.sidebar.subheader("👤 Datos del Alumno")
