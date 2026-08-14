@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL CON LOGO HORIZONTAL FIJO (ESTÁTICO)
+# LOGO MENFA - VERSIÓN HORIZONTAL FIJA
 # -----------------------------------------------------------------------------
 st.sidebar.markdown("""
     <style>
@@ -59,11 +59,11 @@ st.sidebar.markdown("""
 
     .logo-menfa-svg {
         width: 100%;
-        max-width: 250px;
+        max-width: 260px;
         height: auto;
         display: block;
         margin: 0 auto;
-        filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+        filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
     }
     </style>
 
@@ -80,12 +80,12 @@ st.sidebar.markdown("""
                 </linearGradient>
             </defs>
 
-            <!-- Escudo Isotipo / Torre Oil & Gas con Gota (A la izquierda) -->
+            <!-- Escudo e Isotipo Oil & Gas (Llama / Torre) -->
             <rect x="5" y="5" width="70" height="90" rx="14" fill="url(#gradBlue)" />
             <path d="M 40 20 Q 60 50 40 70 Q 20 50 40 20 Z" fill="url(#gradOrange)" />
             <circle cx="40" cy="75" r="4" fill="#FFFFFF" />
-            
-            <!-- Texto MENFA y Subtítulos (A la derecha) -->
+
+            <!-- Texto MENFA y Subtítulos -->
             <text x="90" y="50" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" letter-spacing="1">MENFA</text>
             <text x="91" y="70" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="11.5" fill="#F37021" letter-spacing="2">CAPACITACIONES</text>
             <text x="91" y="83" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="8.5" fill="#94A3B8" letter-spacing="1">OIL &amp; GAS TRAINING</text>
@@ -97,7 +97,7 @@ st.sidebar.title("LABORATORIO-PETROLERO")
 
 st.sidebar.subheader("👤 Datos del Alumno")
 nombre_estudiante = st.sidebar.text_input("Nombre y Apellido:", value="Estudiante MENFA")
-legajo_estudiante = st.sidebar.text_input("DNI / Legajo:", value="UTN-2026")
+legajo_estudiante = st.sidebar.text_input("DNI / Legajo:", value="ALUM-2026")
 
 st.sidebar.markdown("---")
 opcion_modulo = st.sidebar.radio(
