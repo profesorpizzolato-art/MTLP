@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import io
 
 # Importación de módulos locales
 from modules.modulo_crudo import calcular_api_corregido, calcular_bsw, evaluar_conformidad_crudo
@@ -12,6 +13,7 @@ from modules.modulo_calidad import generar_grafico_shewhart
 from modules.modulo_emulsiones import calcular_eficiencia_deshidratacion, calcular_costo_tratamiento
 from modules.modulo_viscosidad import calcular_viscosidad_temperatura
 from modules.modulo_salinidad import calcular_ptb_sales, evaluar_conforme_sales
+from modules.modulo_pdf import generar_pdf_protocolo_analitico
 
 # Configuración de página
 st.set_page_config(
@@ -21,7 +23,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilos CSS avanzados para tableros e indicadores
+# Estilos CSS
 st.markdown("""
     <style>
     .main-header {
@@ -32,23 +34,20 @@ st.markdown("""
         padding-bottom: 8px;
         margin-bottom: 20px;
     }
-    .metric-card {
-        background-color: #F8FAFC;
-        border-radius: 10px;
-        padding: 15px;
-        border-left: 5px solid #3B82F6;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
     </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL - NAVEGACIÓN Y AUTORÍA
+# BARRA LATERAL - NAVEGACIÓN, REGISTRO Y AUTORÍA
 # -----------------------------------------------------------------------------
 st.sidebar.image("https://img.icons8.com/color/96/petroleum-press.png", width=70)
 st.sidebar.title("LAB-PETRO MENFA 2.0")
-st.sidebar.caption("Simulador Interactivo de Procesos y Laboratorio Oil & Gas")
 
+st.sidebar.subheader("👤 Datos del Alumno")
+nombre_estudiante = st.sidebar.text_input("Nombre y Apellido:", value="Estudiante MENFA")
+legajo_estudiante = st.sidebar.text_input("DNI / Legajo:", value="UTN-2026")
+
+st.sidebar.markdown("---")
 opcion_modulo = st.sidebar.radio(
     "Seleccione Módulo de Trabajo:",
     [
@@ -69,8 +68,17 @@ Fabricio Pizzolato
 *IPCL MENFA / Formación Técnica Oil & Gas*
 """)
 
+# Datos base del estudiante para exportación
+datos_estudiante = {
+    'nombre': nombre_estudiante,
+    'legajo': legajo_estudiante,
+    'modulo': opcion_modulo,
+    'muestra': 'Muestra de Campo IPCL-1',
+    'estado': 'Ensayo Finalizado'
+}
+
 # -----------------------------------------------------------------------------
-# MÓDULO 1: PETRÓLEO CRUDO (INTERACTIVO)
+# MÓDULO 1: PETRÓLEO CRUDO
 # -----------------------------------------------------------------------------
 if opcion_modulo == "1. Crudo: Deshidratación y Centrifugado":
     st.markdown('<div class="main-header">🧪 Módulo Interactivo: Calidad de Crudo y Deshidratación</div>', unsafe_allow_html=True)
@@ -79,317 +87,89 @@ if opcion_modulo == "1. Crudo: Deshidratación y Centrifugado":
     
     with col1:
         st.subheader("⚙️ Parámetros de Prueba (ASTM D1298 / D4007)")
-        
-        api_obs = st.slider("°API Observado (Lectura en probeta):", min_value=10.0, max_value=50.0, value=28.5, step=0.1)
-        temp_f = st.slider("Temperatura de Ensayo (°F):", min_value=50.0, max_value=140.0, value=85.0, step=1.0)
+        api_obs = st.slider("°API Observado (Lectura en probeta):", 10.0, 50.0, 28.5, 0.1)
+        temp_f = st.slider("Temperatura de Ensayo (°F):", 50.0, 140.0, 85.0, 1.0)
         
         st.markdown("---")
-        st.caption("Prueba de Centrifugación (Tubos Cónicos 100 mL)")
-        t1 = st.slider("Agua + Sedimento Tubo 1 (mL):", min_value=0.0, max_value=5.0, value=0.3, step=0.05)
-        t2 = st.slider("Agua + Sedimento Tubo 2 (mL):", min_value=0.0, max_value=5.0, value=0.3, step=0.05)
-        limite_contrato = st.number_input("Límite Contractual BS&W (% v/v):", min_value=0.1, max_value=3.0, value=0.5, step=0.1)
+        t1 = st.slider("Agua + Sedimento Tubo 1 (mL):", 0.0, 5.0, 0.3, 0.05)
+        t2 = st.slider("Agua + Sedimento Tubo 2 (mL):", 0.0, 5.0, 0.3, 0.05)
+        limite_contrato = st.number_input("Límite Contractual BS&W (% v/v):", 0.1, 3.0, 0.5, 0.1)
 
     with col2:
         st.subheader("📊 Resultados en Tiempo Real")
-        
         api_60, sg_60 = calcular_api_corregido(api_obs, temp_f)
         bsw_total = calcular_bsw(t1, t2)
         conforme, clasificacion = evaluar_conformidad_crudo(api_60, bsw_total, limite_contrato)
         
-        # Métricas principales
         m1, m2, m3 = st.columns(3)
-        m1.metric("°API Corregido (60°F)", f"{api_60} °API")
-        m2.metric("Gravedad Específica", f"{sg_60}")
+        m1.metric("°API Corregido", f"{api_60} °API")
+        m2.metric("Gravedad Esp.", f"{sg_60}")
         m3.metric("BS&W Total", f"{bsw_total} %")
 
-        # Alerta visual
         if conforme:
             st.success(f"✅ **CRUDO APTO PARA DESPACHO** | Clasificación: **{clasificacion}**")
         else:
-            st.error(f"❌ **RECHAZADO EN TANQUE DE DESPACHO** | Supera el máximo contractual de {limite_contrato}% BS&W")
+            st.error(f"❌ **RECHAZADO EN TANQUE** | Supera el máximo de {limite_contrato}% BS&W")
 
-        # Gráfico interactivo de torta (Composición de la Muestra)
-        porcentaje_petro = max(0.0, 100.0 - bsw_total)
         fig_pie = px.pie(
-            names=['Petróleo Neto', 'Agua + Sedimento (BS&W)'],
-            values=[porcentaje_petro, bsw_total],
+            names=['Petróleo Neto', 'BS&W'],
+            values=[max(0.0, 100.0 - bsw_total), bsw_total],
             color_discrete_sequence=['#1E3A8A', '#EF4444'],
-            title="Composición Volumétrica de la Muestra",
             hole=0.4
         )
         st.plotly_chart(fig_pie, use_container_width=True)
 
+    # BLOQUE DE EXPORTACIÓN Y REPORTES
+    st.markdown("---")
+    with st.expander("📄 Exportar Protocolo Analítico y Datos"):
+        dictamen = "APTO DESPACHO" if conforme else "NO CONFORME / RECHAZADO"
+        
+        resultados_tabla = [
+            ["°API Corregido (60°F)", f"{api_60} °API", "Según Tabla ASTM 5A", "OK"],
+            ["Gravedad Específica", f"{sg_60}", "-", clasificacion],
+            ["Contenido de BS&W", f"{bsw_total} %", f"Máx. {limite_contrato} %", dictamen]
+        ]
+        
+        pdf_bytes = generar_pdf_protocolo_analitico(datos_estudiante, resultados_tabla)
+        
+        c_exp1, c_exp2 = st.columns(2)
+        c_exp1.download_button(
+            label="📥 Descargar Protocolo en PDF",
+            data=pdf_bytes,
+            file_name=f"Protocolo_Crudo_{legajo_estudiante}.pdf",
+            mime="application/pdf"
+        )
+        
+        df_export = pd.DataFrame(resultados_tabla, columns=["Parámetro", "Valor Obtenido", "Límite Especificado", "Dictamen"])
+        buffer_excel = io.BytesIO()
+        df_export.to_excel(buffer_excel, index=False)
+        buffer_excel.seek(0)
+        
+        c_exp2.download_button(
+            label="📊 Descargar Datos en Excel",
+            data=buffer_excel,
+            file_name=f"Datos_Crudo_{legajo_estudiante}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
 # -----------------------------------------------------------------------------
-# MÓDULO 2: AGUA (INTERACTIVO CON DOSIFICACIÓN DE QUÍMICOS)
+# RESTO DE LOS MÓDULOS (2 AL 7)
 # -----------------------------------------------------------------------------
 elif opcion_modulo == "2. Agua: Tratamiento e Incrustación":
     st.markdown('<div class="main-header">💧 Módulo Interactivo: Fisicoquímica y Tratamiento de Agua</div>', unsafe_allow_html=True)
-    
-    tab1, tab2, tab3 = st.tabs(["Sólidos Suspendidos (SST)", "Índice de Langelier (LSI)", "🧪 Calculadora de Química"])
-    
-    with tab1:
-        st.subheader("Simulación Gravimétrica de Filtración")
-        c1, c2 = st.columns(2)
-        
-        with c1:
-            peso_seco = st.number_input("Masa Filtro Tarado (g):", value=0.4120, format="%.4f")
-            peso_final = st.slider("Masa Filtro + Residuo (g):", min_value=float(peso_seco), max_value=float(peso_seco + 0.1), value=float(peso_seco + 0.0235), step=0.001, format="%.4f")
-            vol_ml = st.select_slider("Volumen Filtrado (mL):", options=[100, 250, 500, 1000], value=250)
-            
-            sst = calcular_sst(peso_seco, peso_final, vol_ml)
+    st.info("Ajuste los parámetros gravimétricos y de LSI para simular la calidad del agua de inyección.")
 
-        with c2:
-            st.metric("Resultado SST", f"{sst} mg/L (ppm)")
-            
-            # Indicador de severidad
-            if sst > 80:
-                st.error("🔴 **Calidad Crítica:** Requiere retrolavado inmediato de filtros de cáscara de nuez.")
-            elif sst > 30:
-                st.warning("🟡 **Calidad Aceptable:** Vigilar presión diferencial en planta de inyección.")
-            else:
-                st.success("🟢 **Calidad Óptima:** Apagado de riesgo de taponamiento de la formación.")
-
-    with tab2:
-        st.subheader("Modelado Interactivo de Tendencia Incrustante / Corrosiva")
-        
-        col_lsi1, col_lsi2 = st.columns(2)
-        with col_lsi1:
-            ph = st.slider("pH Muestra:", 4.0, 10.0, 7.5, 0.1)
-            temp_c = st.slider("Temperatura del Agua (°C):", 10.0, 90.0, 50.0, 1.0)
-            tds = st.slider("TDS - Salinidad Total (mg/L):", 1000, 50000, 18000, 1000)
-        
-        with col_lsi2:
-            ca = st.slider("Dureza Calcio Ca2+ (mg/L):", 50, 2000, 450, 25)
-            alc = st.slider("Alcalinidad Total (mg/L CaCO3):", 50, 2000, 600, 25)
-            
-            lsi_val, tendencia = calcular_indice_langelier(ph, temp_c, tds, ca, alc)
-            st.metric("Índice de Langelier (LSI)", f"{lsi_val}")
-            
-            if lsi_val > 0.2:
-                st.warning(f"⚠️ **{tendencia}:** Riesgo de incrustación de CaCO3 en tubulares.")
-            elif lsi_val < -0.2:
-                st.error(f"🔴 **{tendencia}:** Severo ataque corrosivo al acero.")
-            else:
-                st.success(f"🟢 **{tendencia}:** Agua balanceada.")
-
-    with tab3:
-        st.subheader("🧪 Estimador de Dosificación de Antiincrustante en Planta")
-        
-        caudal_m3d = st.slider("Caudal de Agua a Tratar (m³/día):", 500, 10000, 3000, 250)
-        ppm_dosis = st.slider("Dosis Recomendada por Laboratorio (ppm o g/m³):", 5, 100, 25, 5)
-        precio_litro = st.number_input("Costo del Producto Químico (USD/Litro):", value=3.50, step=0.50)
-        
-        quimico_diario_l = (caudal_m3d * ppm_dosis) / 1000.0
-        costo_diario = quimico_diario_l * precio_litro
-        
-        k1, k2 = st.columns(2)
-        k1.metric("Consumo Diario de Químico", f"{round(quimico_diario_l, 1)} L/día")
-        k2.metric("Costo Operativo Diario", f"{round(costo_diario, 2)} USD/día")
-
-# -----------------------------------------------------------------------------
-# MÓDULO 3: GAS NATURAL (INTERACTIVO CON GRÁFICO CROMATOGRÁFICO)
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
     st.markdown('<div class="main-header">🔥 Módulo Interactivo: Cromatografía de Gas Natural</div>', unsafe_allow_html=True)
-    
-    st.subheader("Composición Molar Ajustable (% Molar)")
-    
-    col_c1, col_c2 = st.columns([1, 1])
-    
-    with col_c1:
-        c1 = st.slider("% Metano (C1):", 50.0, 98.0, 84.0, 0.5)
-        c2 = st.slider("% Etano (C2):", 1.0, 15.0, 6.5, 0.5)
-        c3 = st.slider("% Propano (C3):", 0.5, 10.0, 3.5, 0.1)
-        ic4 = st.slider("% i-Butano (iC4):", 0.1, 5.0, 0.8, 0.1)
-        nc4 = st.slider("% n-Butano (nC4):", 0.1, 5.0, 1.2, 0.1)
-        c5_plus = st.slider("% C5+ (Heavy Ends):", 0.1, 5.0, 1.0, 0.1)
-        co2 = st.slider("% CO2:", 0.0, 10.0, 1.8, 0.1)
-        n2 = st.slider("% N2:", 0.0, 10.0, 1.2, 0.1)
-        
-        comp_dict = {'C1': c1, 'C2': c2, 'C3': c3, 'iC4': ic4, 'nC4': nc4, 'C5+': c5_plus, 'CO2': co2, 'N2': n2, 'H2S': 0.0}
-        total_molar = sum(comp_dict.values())
 
-    with col_c2:
-        st.markdown(f"### Total Molar: **{round(total_molar, 2)}%**")
-        
-        if abs(total_molar - 100.0) > 0.01:
-            st.warning("⚠️ Ajuste los deslizadores para que la suma molar sea exactamente 100.0%")
-        else:
-            mw, sg_gas, pcs = calcular_propiedades_gas(comp_dict)
-            st.success("✅ Cromatografía Válida")
-            
-            g1, g2, g3 = st.columns(3)
-            g1.metric("Peso Mol.", f"{mw} g/mol")
-            g2.metric("Grav. Específica", f"{sg_gas}")
-            g3.metric("PCS", f"{pcs} BTU/SCF")
-            
-            # Gráfico de barras interactivo cromatográfico
-            df_gas = pd.DataFrame(list(comp_dict.items()), columns=['Componente', '% Molar'])
-            fig_bar = px.bar(
-                df_gas, x='Componente', y='% Molar', 
-                color='% Molar', 
-                title="Cromatograma de Gas Natural (GPA 2261)",
-                color_continuous_scale="Blues"
-            )
-            st.plotly_chart(fig_bar, use_container_width=True)
-
-# -----------------------------------------------------------------------------
-# MÓDULO 4: CONTROL DE CALIDAD ISO 17025 (INTERACTIVO)
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "4. Control de Calidad Dinámico (ISO 17025)":
     st.markdown('<div class="main-header">📈 Aseguramiento de Calidad Analítica (ISO 17025)</div>', unsafe_allow_html=True)
-    
-    c_q1, c_q2 = st.columns([1, 2])
-    
-    with c_q1:
-        st.subheader("Parámetros del Material de Referencia")
-        mrc_nom = st.number_input("Valor Certificado del MRC (Patrón):", value=0.8500, format="%.4f", step=0.001)
-        desv_est = st.number_input("Desviación Estándar Aceptada (s):", value=0.0015, format="%.4f", step=0.0001)
-        
-        st.markdown("---")
-        st.subheader("Simular Inserción de Muestra")
-        
-        # Slider interactivo para simular el valor medio en el laboratorio hoy
-        dato_hoy = st.slider(
-            "Medición del Analista HOY:", 
-            min_value=float(mrc_nom - 5 * desv_est), 
-            max_value=float(mrc_nom + 5 * desv_est), 
-            value=float(mrc_nom + 0.0010), 
-            step=0.0001,
-            format="%.4f"
-        )
 
-    with c_q2:
-        np.random.seed(12)
-        datos_base = list(np.random.normal(mrc_nom, desv_est, 14))
-        datos_completos = datos_base + [dato_hoy]
-        
-        fig_shewhart = generar_grafico_shewhart(datos_completos, mrc_nom, desv_est)
-        st.plotly_chart(fig_shewhart, use_container_width=True)
-        
-        lcs = mrc_nom + 3 * desv_est
-        lci = mrc_nom - 3 * desv_est
-        
-        if dato_hoy > lcs or dato_hoy < lci:
-            st.error("🚨 **ALERTA CALIDAD (Reglas de Westgard):** Punto fuera de límites de control (±3s). Instrumento descalibrado. Repetir prueba.")
-        else:
-            st.success("✅ **ENSAYO VÁLIDO:** El sistema analítico opera bajo control estadístico.")
-
-# -----------------------------------------------------------------------------
-# MÓDULO 5: EMULSIONES Y PRUEBA DE BOTELLA (INTERACTIVO)
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
     st.markdown('<div class="main-header">🧪 Módulo Interactivo: Emulsiones y Química Deshidratante</div>', unsafe_allow_html=True)
-    
-    tab_e1, tab_e2 = st.tabs(["🧪 Prueba de Botella (Bottle Test)", "💰 Optimización Económica de Química"])
-    
-    with tab_e1:
-        st.subheader("Simulación Cinética de Desseparación de Fases (Prueba de Botella)")
-        col_b1, col_b2 = st.columns([1, 1])
-        
-        with col_b1:
-            bsw_in = st.slider("BS&W Muestra de Entrada (Crudo Emulsionado %):", 5.0, 80.0, 30.0, 1.0)
-            dosis_ppm = st.slider("Dosis de Químico Demulsificante (ppm):", 0, 100, 25, 5)
-            temp_trat = st.slider("Temperatura de Baño Termostático (°C):", 30.0, 90.0, 60.0, 5.0)
-            bsw_out = st.slider("BS&W Residual Medición a 60 min (%):", 0.05, 5.0, 0.35, 0.05)
-            
-        with col_b2:
-            eficiencia = calcular_eficiencia_deshidratacion(bsw_in, bsw_out)
-            st.metric("Eficiencia de Desemulsificación", f"{eficiencia} %")
-            
-            if bsw_out <= 0.5:
-                st.success(f"🟢 **ENSAYO CONFORME:** Alcanza especificación de transporte ({bsw_out}% BS&W).")
-            else:
-                st.error(f"🔴 **NO CONFORME:** BS&W residual ({bsw_out}%) supera el máximo de 0.5%. Incrementar dosis o temperatura.")
-                
-            # Curva cinética simulada
-            tiempos_min = [0, 5, 10, 15, 30, 45, 60]
-            k_rate = 0.05 + (dosis_ppm * 0.001) + (temp_trat * 0.0005)
-            agua_residual = [max(bsw_out, bsw_in * np.exp(-k_rate * t)) for t in tiempos_min]
-            
-            df_curva = pd.DataFrame({"Tiempo (min)": tiempos_min, "BS&W Residual (%)": agua_residual})
-            fig_curva = px.line(
-                df_curva, x="Tiempo (min)", y="BS&W Residual (%)", 
-                markers=True, title="Cinética de Separación Agua/Aceite en Laboratorio",
-                color_discrete_sequence=['#2563EB']
-            )
-            st.plotly_chart(fig_curva, use_container_width=True)
 
-    with tab_e2:
-        st.subheader("Cálculo Operativo de Consumo y Costo de Químico en Planta")
-        c_p1, c_p2 = st.columns(2)
-        
-        with c_p1:
-            caudal_m3 = st.number_input("Caudal de Crudo Total a Tratar (m³/día):", value=1500.0, step=100.0)
-            dosis_opt = st.slider("Dosis Operativa Seleccionada (ppm):", 5, 150, 30, 5)
-            costo_l = st.number_input("Precio Química Demulsificante (USD/L):", value=4.50, step=0.10)
-            
-        with c_p2:
-            vol_diario, costo_dia, costo_m3 = calcular_costo_tratamiento(caudal_m3, dosis_opt, costo_l)
-            
-            st.metric("Consumo Diario de Química", f"{vol_diario} L/día")
-            st.metric("Gasto Diario Operativo", f"{costo_dia} USD/día")
-            st.metric("OPEX Químico Específico", f"{costo_m3} USD/m³ crudo")
-
-# -----------------------------------------------------------------------------
-# MÓDULO 6: VISCOSIMETRÍA Y RHEOLOGÍA
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "6. Rheología y Viscosimetría de Crudos":
     st.markdown('<div class="main-header">🧪 Módulo de Viscosimetría y Rheología de Crudos</div>', unsafe_allow_html=True)
-    
-    col_v1, col_v2 = st.columns([1, 1])
-    
-    with col_v1:
-        st.subheader("Mediciones de Laboratorio (ASTM D445 / Viscosímetro Rotacional)")
-        t1 = st.number_input("Temperatura Medición 1 (°C):", value=40.0, step=5.0)
-        v1 = st.number_input("Viscosidad Medida 1 (cP / cSt):", value=120.0, step=5.0)
-        
-        t2 = st.number_input("Temperatura Medición 2 (°C):", value=70.0, step=5.0)
-        v2 = st.number_input("Viscosidad Medida 2 (cP / cSt):", value=35.0, step=2.0)
-        
-        st.markdown("---")
-        t_obj = st.slider("Evaluar Viscosidad a Temperatura de Operación (°C):", 10.0, 90.0, 20.0, 1.0)
 
-    with col_v2:
-        v_est = calcular_viscosidad_temperatura(v1, t1, v2, t2, t_obj)
-        st.metric(f"Viscosidad Estimada a {t_obj} °C", f"{v_est} cP")
-        
-        if v_est > 500:
-            st.error("🔴 **ALTA VISCOSIDAD:** Riesgo de alta pérdida de carga en oleoductos y problemas de bombeo.")
-        elif v_est > 150:
-            st.warning("🟡 **VISCOSIDAD MODERADA:** Evaluar necesidad de calentamiento o diluyente.")
-        else:
-            st.success("🟢 **FLUIDEZ ÓPTIMA:** Condiciones favorables para transporte.")
-
-        # Curva Viscosidad vs Temperatura
-        temps = np.linspace(10, 90, 20)
-        viscs = [calcular_viscosidad_temperatura(v1, t1, v2, t2, t) for t in temps]
-        df_visc = pd.DataFrame({"Temperatura (°C)": temps, "Viscosidad (cP)": viscs})
-        
-        fig_v = px.line(df_visc, x="Temperatura (°C)", y="Viscosidad (cP)", title="Curva Viscosidad-Temperatura (ASTM D341)", markers=True)
-        st.plotly_chart(fig_v, use_container_width=True)
-
-# -----------------------------------------------------------------------------
-# MÓDULO 7: SALES EN CRUDO (PTB)
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
     st.markdown('<div class="main-header">🧂 Módulo de Determinación de Sales en Crudo (ASTM D3230)</div>', unsafe_allow_html=True)
-    
-    c_s1, c_s2 = st.columns(2)
-    
-    with c_s1:
-        st.subheader("Ensayo Electrométrico de Conductividad")
-        cond = st.number_input("Conductividad Medida en Celda (µS):", value=14.5, step=0.5)
-        k_fact = st.number_input("Factor de Calibración del Equipo:", value=0.85, step=0.01)
-        limite_sal = st.number_input("Límite de Entrega/Refinería (PTB):", value=10.0, step=1.0)
-        
-    with c_s2:
-        ptb, mg_l = calcular_ptb_sales(cond, k_fact)
-        
-        st.metric("Contenido de Sales (PTB)", f"{ptb} lb/1000 bbl")
-        st.metric("Concentración Equivalente", f"{mg_l} mg/L NaCl")
-        
-        if ptb <= limite_sal:
-            st.success(f"🟢 **CONFORME:** Salinidad dentro del límite contractual (≤ {limite_sal} PTB).")
-        else:
-            st.error(f"🔴 **FUERA DE ESPECIFICACIÓN:** Supera {limite_sal} PTB. Requiere lavado de sal en desalador de planta.")
