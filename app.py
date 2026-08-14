@@ -97,7 +97,7 @@ if opcion_modulo == "1. Crudo: °API y BS&W":
         if conforme:
             st.success(f"✅ **CONFORME PARA TRANSFERENCIA DE CUSTODIA** ({clasificacion})")
         else:
-            st.error(f"❌ **FORA DE ESPECIFICACIÓN** (Excede el límite del {limite_contrato}%)")
+            st.error(f"❌ **FUERA DE ESPECIFICACIÓN** (Excede el límite del {limite_contrato}%)")
 
 # -----------------------------------------------------------------------------
 # MÓDULO 2: AGUA DE FORMACIÓN E INYECCIÓN
@@ -105,8 +105,7 @@ if opcion_modulo == "1. Crudo: °API y BS&W":
 elif opcion_modulo == "2. Agua: SST e Incrustaciones":
     st.markdown('<div class="main-header">💧 Módulo de Fisicoquímica de Aguas Petroleras</div>', unsafe_allow_html=True)
     
-  # ✅ Correcto (plural)
-tab1, tab2 = st.tabs(["Sólidos Suspendidos Totales (SST)", "Índice de Incrustación (LSI)"])
+    tab1, tab2 = st.tabs(["Sólidos Suspendidos Totales (SST)", "Índice de Incrustación (LSI)"])
     
     with tab1:
         st.subheader("Determinación Gravimétrica de SST (SM 2540 D)")
