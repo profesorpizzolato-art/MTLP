@@ -9,6 +9,7 @@ from modules.modulo_crudo import calcular_api_corregido, calcular_bsw, evaluar_c
 from modules.modulo_agua import calcular_sst, calcular_indice_langelier
 from modules.modulo_gas import calcular_propiedades_gas
 from modules.modulo_calidad import generar_grafico_shewhart
+from modules.modulo_emulsiones import calcular_eficiencia_deshidratacion, calcular_costo_tratamiento
 
 # Configuración de página
 st.set_page_config(
@@ -52,7 +53,8 @@ opcion_modulo = st.sidebar.radio(
         "1. Crudo: Deshidratación y Centrifugado",
         "2. Agua: Tratamiento e Incrustación",
         "3. Gas Natural: Cromatografía y Mezcla",
-        "4. Control de Calidad Dinámico (ISO 17025)"
+        "4. Control de Calidad Dinámico (ISO 17025)",
+        "5. Emulsiones y Química Deshidratante"
     ]
 )
 
@@ -117,7 +119,7 @@ if opcion_modulo == "1. Crudo: Deshidratación y Centrifugado":
 # MÓDULO 2: AGUA (INTERACTIVO CON DOSIFICACIÓN DE QUÍMICOS)
 # -----------------------------------------------------------------------------
 elif opcion_modulo == "2. Agua: Tratamiento e Incrustación":
-    st.markdown('<div class="main-header">💧 Módulo Interactivo: Fisicoquímica y Trata de Agua</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">💧 Módulo Interactivo: Fisicoquímica y Tratamiento de Agua</div>', unsafe_allow_html=True)
     
     tab1, tab2, tab3 = st.tabs(["Sólidos Suspendidos (SST)", "Índice de Langelier (LSI)", "🧪 Calculadora de Química"])
     
@@ -268,3 +270,59 @@ elif opcion_modulo == "4. Control de Calidad Dinámico (ISO 17025)":
             st.error("🚨 **ALERTA CALIDAD (Reglas de Westgard):** Punto fuera de límites de control (±3s). Instrumento descalibrado. Repetir prueba.")
         else:
             st.success("✅ **ENSAYO VÁLIDO:** El sistema analítico opera bajo control estadístico.")
+
+# -----------------------------------------------------------------------------
+# MÓDULO 5: EMULSIONES Y PRUEBA DE BOTELLA (INTERACTIVO)
+# -----------------------------------------------------------------------------
+elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
+    st.markdown('<div class="main-header">🧪 Módulo Interactivo: Emulsiones y Química Deshidratante</div>', unsafe_allow_html=True)
+    
+    tab_e1, tab_e2 = st.tabs(["🧪 Prueba de Botella (Bottle Test)", "💰 Optimización Económica de Química"])
+    
+    with tab_e1:
+        st.subheader("Simulación Cinética de Desseparación de Fases (Prueba de Botella)")
+        col_b1, col_b2 = st.columns([1, 1])
+        
+        with col_b1:
+            bsw_in = st.slider("BS&W Muestra de Entrada (Crudo Emulsionado %):", 5.0, 80.0, 30.0, 1.0)
+            dosis_ppm = st.slider("Dosis de Químico Demulsificante (ppm):", 0, 100, 25, 5)
+            temp_trat = st.slider("Temperatura de Baño Termostático (°C):", 30.0, 90.0, 60.0, 5.0)
+            bsw_out = st.slider("BS&W Residual Medición a 60 min (%):", 0.05, 5.0, 0.35, 0.05)
+            
+        with col_b2:
+            eficiencia = calcular_eficiencia_deshidratacion(bsw_in, bsw_out)
+            st.metric("Eficiencia de Desemulsificación", f"{eficiencia} %")
+            
+            if bsw_out <= 0.5:
+                st.success(f"🟢 **ENSAYO CONFORME:** Alcanza especificación de transporte ({bsw_out}% BS&W).")
+            else:
+                st.error(f"🔴 **NO CONFORME:** BS&W residual ({bsw_out}%) supera el máximo de 0.5%. Incrementar dosis o temperatura.")
+                
+            # Curva cinética simulada
+            tiempos_min = [0, 5, 10, 15, 30, 45, 60]
+            k_rate = 0.05 + (dosis_ppm * 0.001) + (temp_trat * 0.0005)
+            agua_residual = [max(bsw_out, bsw_in * np.exp(-k_rate * t)) for t in tiempos_min]
+            
+            df_curva = pd.DataFrame({"Tiempo (min)": tiempos_min, "BS&W Residual (%)": agua_residual})
+            fig_curva = px.line(
+                df_curva, x="Tiempo (min)", y="BS&W Residual (%)", 
+                markers=True, title="Cinética de Separación Agua/Aceite en Laboratorio",
+                color_discrete_sequence=['#2563EB']
+            )
+            st.plotly_chart(fig_curva, use_container_width=True)
+
+    with tab_e2:
+        st.subheader("Cálculo Operativo de Consumo y Costo de Químico en Planta")
+        c_p1, c_p2 = st.columns(2)
+        
+        with c_p1:
+            caudal_m3 = st.number_input("Caudal de Crudo Total a Tratar (m³/día):", value=1500.0, step=100.0)
+            dosis_opt = st.slider("Dosis Operativa Seleccionada (ppm):", 5, 150, 30, 5)
+            costo_l = st.number_input("Precio Química Demulsificante (USD/L):", value=4.50, step=0.10)
+            
+        with c_p2:
+            vol_diario, costo_dia, costo_m3 = calcular_costo_tratamiento(caudal_m3, dosis_opt, costo_l)
+            
+            st.metric("Consumo Diario de Química", f"{vol_diario} L/día")
+            st.metric("Gasto Diario Operativo", f"{costo_dia} USD/día")
+            st.metric("OPEX Químico Específico", f"{costo_m3} USD/m³ crudo")
