@@ -261,11 +261,12 @@ elif opcion_modulo == "4. Control de Calidad Dinámico (ISO 17025)":
     ], "Calidad")
 
 # -----------------------------------------------------------------------------
-# MÓDULO 5: EMULSIONES Y QUÍMICA
+# MÓDULO 5: EMULSIONES Y QUÍMICA DESHIDRATANTE
 # -----------------------------------------------------------------------------
 elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
     st.markdown('<div class="main-header">🧪 Módulo 5: Dosificación Química y Tratamiento de Emulsiones</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
+    
     with col1:
         st.subheader("⚙️ Parámetros de Operación")
         bsw_in = st.slider("BS&W Entrada (Crudo Bruto %):", 5.0, 60.0, 25.0, 1.0)
@@ -276,8 +277,15 @@ elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
 
     with col2:
         st.subheader("📊 Balance Operativo")
-        efic = calcular_eficiencia_deshidratacion(bsw_in, bsw_out)
-        litros_d, costo_d = calcular_costo_tratamiento(dosis, caudal, costo_l)
+        
+        efic = calcular_eficiencia_deshidratacion(bsw_entrada=bsw_in, bsw_salida=bsw_out)
+        
+        # Desempaquetado explícito de los 2 valores
+        litros_d, costo_d = calcular_costo_tratamiento(
+            dosis_ppm=dosis,
+            caudal_m3d=caudal,
+            costo_litro_usd=costo_l
+        )
         
         m1, m2, m3 = st.columns(3)
         m1.metric("Eficiencia", f"{efic}%")
@@ -290,7 +298,7 @@ elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
             st.warning("⚠️ **INSUFICIENTE SEPARACIÓN**: Ajustar temperatura o dosis química")
 
     exportar_reportes([
-        ["Eficiencia de Deshidratación", f"{efic} %", "Min 95.0 %", "ÓPTIMA" if efic >= 95 else "A JUSTAR"],
+        ["Eficiencia de Deshidratación", f"{efic} %", "Min 95.0 %", "ÓPTIMA" if efic >= 95 else "AJUSTAR"],
         ["Consumo Diario Aditivo", f"{litros_d} L/día", f"Dosis: {dosis} ppm", "OK"],
         ["Costo Operativo Diario", f"${costo_d} USD", "-", "EVALUADO"]
     ], "Emulsiones")
