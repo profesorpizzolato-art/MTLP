@@ -343,6 +343,7 @@ elif opcion_modulo == "6. Rheología y Viscosimetría de Crudos":
 elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
     st.markdown('<div class="main-header">🧂 Módulo 7: Contenido de Sales Electrométrico (ASTM D3230)</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
+    
     with col1:
         st.subheader("⚙️ Parámetros de Mediciones Conductimétricas")
         cond = st.number_input("Conductividad Medida (µS/cm):", 1.0, 500.0, 48.0, 1.0)
@@ -351,8 +352,8 @@ elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
 
     with col2:
         st.subheader("📊 Resultado Analítico")
-        ptb = calcular_ptb_sales(cond, temp_c)
-        es_conforme, msj = evaluar_conforme_sales(ptb, lim_ptb)
+        ptb = calcular_ptb_sales(conductividad_uS=cond, temp_c=temp_c)
+        es_conforme, msj = evaluar_conforme_sales(ptb_calculado=ptb, limite_ptb=lim_ptb)
         
         m1, m2 = st.columns(2)
         m1.metric("Sales Totales", f"{ptb} PTB")
@@ -367,4 +368,3 @@ elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
         ["Sales Totales (PTB)", f"{ptb} PTB", f"Máx {lim_ptb} PTB", "CONFORME" if es_conforme else "NO CONFORME"],
         ["Conductividad Corregida", f"{cond} µS/cm", "@ 25°C", "EVALUADO"]
     ], "Salinidad")
-    
