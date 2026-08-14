@@ -1,11 +1,14 @@
+import sys
+import os
+
+# Asegura que el directorio raíz esté en el path de Python
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+# Ahora sí realizas las importaciones locales
 import streamlit as st
 import numpy as np
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import io
 
-# Importación de módulos locales
 from modules.modulo_crudo import calcular_api_corregido, calcular_bsw, evaluar_conformidad_crudo
 from modules.modulo_agua import calcular_sst, calcular_indice_langelier
 from modules.modulo_gas import calcular_propiedades_gas
@@ -14,7 +17,6 @@ from modules.modulo_emulsiones import calcular_eficiencia_deshidratacion, calcul
 from modules.modulo_viscosidad import calcular_viscosidad_temperatura
 from modules.modulo_salinidad import calcular_ptb_sales, evaluar_conforme_sales
 from modules.modulo_pdf import generar_pdf_protocolo_analitico
-
 # Configuración de página
 st.set_page_config(
     page_title="Simulador interactivo de Laboratorio | IPCL MENFA",
