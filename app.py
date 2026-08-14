@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL CON LOGO ANIMADO (NATIVO ENLINEA)
+# BARRA LATERAL CON LOGO ANIMADO (NATIVO ENLINEA - OPTIMIZADO VERTICAL)
 # -----------------------------------------------------------------------------
 st.sidebar.markdown("""
     <style>
@@ -57,7 +57,7 @@ st.sidebar.markdown("""
             filter: drop-shadow(0 0 6px rgba(243, 112, 33, 0.5));
         }
         50% {
-            transform: translateY(-6px) scale(1.02);
+            transform: translateY(-5px) scale(1.02);
             filter: drop-shadow(0 8px 14px rgba(243, 112, 33, 0.8));
         }
         100% {
@@ -68,24 +68,27 @@ st.sidebar.markdown("""
 
     .logo-menfa-container {
         text-align: center;
-        padding: 10px 0px 15px 0px;
+        padding: 5px 0px 10px 0px;
+        width: 100%;
     }
 
     .logo-menfa-svg {
-        width: 170px;
+        width: 100%;
+        max-width: 220px;
         height: auto;
         animation: float_menfa 3.5s ease-in-out infinite;
         transition: transform 0.3s ease;
-        cursor: pointer;
+        display: block;
+        margin: 0 auto;
     }
 
     .logo-menfa-svg:hover {
-        transform: scale(1.06) rotate(1deg);
+        transform: scale(1.05);
     }
     </style>
 
     <div class="logo-menfa-container">
-        <svg class="logo-menfa-svg" viewBox="0 0 300 110" xmlns="http://www.w3.org/2000/svg">
+        <svg class="logo-menfa-svg" viewBox="0 0 320 145" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
@@ -96,15 +99,16 @@ st.sidebar.markdown("""
                     <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
                 </linearGradient>
             </defs>
-            <!-- Escudo Isotipo / Torre Oil & Gas con Gota -->
-            <rect x="10" y="10" width="70" height="90" rx="14" fill="url(#gradBlue)" />
-            <path d="M 45 25 Q 65 55 45 75 Q 25 55 45 25 Z" fill="url(#gradOrange)" />
-            <circle cx="45" cy="80" r="4" fill="#FFFFFF" />
-            
-            <!-- Texto MENFA y Subtítulo CAPACITACIONES -->
-            <text x="95" y="55" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="36" fill="#FFFFFF" letter-spacing="1">MENFA</text>
-            <text x="96" y="75" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="12" fill="#F37021" letter-spacing="2.5">CAPACITACIONES</text>
-            <text x="96" y="88" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="9" fill="#94A3B8" letter-spacing="1">OIL &amp; GAS TRAINING</text>
+
+            <!-- Escudo/Isotipo Centrado (Eje X = 160) -->
+            <rect x="130" y="5" width="60" height="65" rx="12" fill="url(#gradBlue)" />
+            <path d="M 160 16 Q 175 38 160 52 Q 145 38 160 16 Z" fill="url(#gradOrange)" />
+            <circle cx="160" cy="58" r="3" fill="#FFFFFF" />
+
+            <!-- Textos Centrados Horizontalmente -->
+            <text x="160" y="96" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="24" fill="#FFFFFF" letter-spacing="2">MENFA</text>
+            <text x="160" y="115" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11" fill="#F37021" letter-spacing="2">CAPACITACIONES</text>
+            <text x="160" y="130" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-weight="500" font-size="8" fill="#94A3B8" letter-spacing="1">OIL &amp; GAS TRAINING</text>
         </svg>
     </div>
 """, unsafe_allow_html=True)
