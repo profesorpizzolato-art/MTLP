@@ -47,47 +47,67 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL CON LOGO ANIMADO
+# BARRA LATERAL CON LOGO ANIMADO (NATIVO ENLINEA)
 # -----------------------------------------------------------------------------
-# Inyección de estilos CSS para la animación
-st.markdown("""
+st.sidebar.markdown("""
     <style>
-    /* Efecto de elevación y resplandor para la imagen en el sidebar */
-    [data-testid="stSidebar"] [data-testid="stImage"] img {
-        border-radius: 12px;
-        animation: float_menfa 3.5s ease-in-out infinite;
-        transition: transform 0.3s ease;
-    }
-
-    [data-testid="stSidebar"] [data-testid="stImage"] img:hover {
-        transform: scale(1.08) rotate(2deg);
-    }
-
     @keyframes float_menfa {
         0% {
             transform: translateY(0px) scale(1);
-            filter: drop-shadow(0 0 6px rgba(243, 112, 33, 0.4));
+            filter: drop-shadow(0 0 6px rgba(243, 112, 33, 0.5));
         }
         50% {
-            transform: translateY(-7px) scale(1.03);
-            filter: drop-shadow(0 8px 14px rgba(243, 112, 33, 0.7));
+            transform: translateY(-6px) scale(1.02);
+            filter: drop-shadow(0 8px 14px rgba(243, 112, 33, 0.8));
         }
         100% {
             transform: translateY(0px) scale(1);
-            filter: drop-shadow(0 0 6px rgba(243, 112, 33, 0.4));
+            filter: drop-shadow(0 0 6px rgba(243, 112, 33, 0.5));
         }
     }
+
+    .logo-menfa-container {
+        text-align: center;
+        padding: 10px 0px 15px 0px;
+    }
+
+    .logo-menfa-svg {
+        width: 170px;
+        height: auto;
+        animation: float_menfa 3.5s ease-in-out infinite;
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+
+    .logo-menfa-svg:hover {
+        transform: scale(1.06) rotate(1deg);
+    }
     </style>
+
+    <div class="logo-menfa-container">
+        <svg class="logo-menfa-svg" viewBox="0 0 300 110" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#F37021;stop-opacity:1" />
+                </linearGradient>
+                <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <!-- Escudo Isotipo / Torre Oil & Gas con Gota -->
+            <rect x="10" y="10" width="70" height="90" rx="14" fill="url(#gradBlue)" />
+            <path d="M 45 25 Q 65 55 45 75 Q 25 55 45 25 Z" fill="url(#gradOrange)" />
+            <circle cx="45" cy="80" r="4" fill="#FFFFFF" />
+            
+            # Texto MENFA y Subtítulo CAPACITACIONES
+            <text x="95" y="55" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="36" fill="#FFFFFF" letter-spacing="1">MENFA</text>
+            <text x="96" y="75" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="12" fill="#F37021" letter-spacing="2.5">CAPACITACIONES</text>
+            <text x="96" y="88" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="9" fill="#94A3B8" letter-spacing="1">OIL &amp; GAS TRAINING</text>
+        </svg>
+    </div>
 """, unsafe_allow_html=True)
-
-# Determinación y carga de la imagen (Prioridad: Local > URL)
-logo_path = os.path.join(BASE_DIR, "assets", "logo_menfa.png")
-
-if os.path.exists(logo_path):
-    st.sidebar.image(logo_path, width=140)
-else:
-    # URL directa de respaldo si el archivo aún no fue subido al repo
-    st.sidebar.image("https://raw.githubusercontent.com/fabriciopizzolato/mtlp/main/assets/logo_menfa.png", width=140)
 
 st.sidebar.title("LAB-PETRO MENFA 2.0")
 
