@@ -1,14 +1,41 @@
-def calcular_ptb_sales(conductividad_uS, factor_calibracion=0.85):
-    """
-    Calcula la concentración de sales en lb/1000 bbl (PTB) según ASTM D3230.
-    """
-    ptb = conductividad_uS * factor_calibracion
-    mg_l_equiv = ptb * 2.85  # Conversión aproximada a mg/L de NaCl en la mezcla
-    return round(ptb, 2), round(mg_l_equiv, 1)
+# modules/modulo_salinidad.py
 
-def evaluar_conforme_sales(ptb_calculado, limite_ptb=10.0):
+def calcular_ptb_sales(conductividad_uS: float, temp_c: float) -> float:
     """
-    Evalúa si cumple con la especificación de entrega a refinería/oleoducto (típicamente <= 10-20 PTB).
+    Estima el contenido de sales en crudo expresado en PTB (Pounds per Thousand Barrels)
+    según método de conductividad eléctrica (ASTM D3230).
     """
-    conforme = ptb_calculado <= limite_ptb
-    return conforme
+    try:
+        cond = float(conductividad_uS)
+        t = float(temp_c)
+        
+        # Corregido por temperatura a 25°C
+        factor_temp = 1 + 0.02 * (t - 25)
+        cond_25 = cond / factor_temp if factor_temp != 0 else cond
+        
+        # Ajuste empírico no lineal de calibración PTB vs uS
+        if cond_25 <= 0:
+            return 0.0
+            
+        ptb = 0.142 * (cond_25 ** 1.08)
+        return float(round(ptb, 2))
+    except Exception:
+        return 0.0
+
+
+def evaluar_conforme_sales(ptb_calculado: float, limite_ptb: float = 10.0) -> tuple[bool, str]:
+    """
+    Evalúa la conformidad del nivel de sales en el crudo.
+    Garantiza que ambos valores se traten como números antes de comparar.
+    """
+    try:
+        val_ptb = float(ptb_calculado)
+        val_limite = float(limite_ptb)
+    except (ValueError, TypeError):
+        val_ptb = 0.0
+        val_limite = 10.0
+
+    if val_ptb <= val_limite:
+        return True, f"CONFORME (PTB {val_ptb} <= {val_limite})"
+    else:
+        return False, f"EXCEDIDO (PTB {val_ptb} > {val_limite} - Riesgo de corrosión en Refinería)"
