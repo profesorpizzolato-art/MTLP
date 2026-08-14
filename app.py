@@ -10,6 +10,8 @@ from modules.modulo_agua import calcular_sst, calcular_indice_langelier
 from modules.modulo_gas import calcular_propiedades_gas
 from modules.modulo_calidad import generar_grafico_shewhart
 from modules.modulo_emulsiones import calcular_eficiencia_deshidratacion, calcular_costo_tratamiento
+from modules.modulo_viscosidad import calcular_viscosidad_temperatura
+from modules.modulo_salinidad import calcular_ptb_sales, evaluar_conforme_sales
 
 # Configuración de página
 st.set_page_config(
@@ -55,6 +57,8 @@ opcion_modulo = st.sidebar.radio(
         "3. Gas Natural: Cromatografía y Mezcla",
         "4. Control de Calidad Dinámico (ISO 17025)",
         "5. Emulsiones y Química Deshidratante"
+        "6. Rheología y Viscosimetría de Crudos",      
+        "7. Determinación de Sales en Crudo (PTB)"      
     ]
 )
 
@@ -326,3 +330,65 @@ elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
             st.metric("Consumo Diario de Química", f"{vol_diario} L/día")
             st.metric("Gasto Diario Operativo", f"{costo_dia} USD/día")
             st.metric("OPEX Químico Específico", f"{costo_m3} USD/m³ crudo")
+# -----------------------------------------------------------------------------
+# MÓDULO 6: VISCOSIMETRÍA Y RHEOLOGÍA
+# -----------------------------------------------------------------------------
+elif opcion_modulo == "6. Rheología y Viscosimetría de Crudos":
+    st.markdown('<div class="main-header">🧪 Módulo de Viscosimetría y Rheología de Crudos</div>', unsafe_allow_html=True)
+    
+    col_v1, col_v2 = st.columns([1, 1])
+    
+    with col_v1:
+        st.subheader("Mediciones de Laboratorio (ASTM D445 / Viscosímetro Rotacional)")
+        t1 = st.number_input("Temperatura Medición 1 (°C):", value=40.0, step=5.0)
+        v1 = st.number_input("Viscosidad Medida 1 (cP / cSt):", value=120.0, step=5.0)
+        
+        t2 = st.number_input("Temperatura Medición 2 (°C):", value=70.0, step=5.0)
+        v2 = st.number_input("Viscosidad Medida 2 (cP / cSt):", value=35.0, step=2.0)
+        
+        st.markdown("---")
+        t_obj = st.slider("Evaluar Viscosidad a Temperatura de Operación (°C):", 10.0, 90.0, 20.0, 1.0)
+
+    with col_v2:
+        v_est = calcular_viscosidad_temperatura(v1, t1, v2, t2, t_obj)
+        st.metric(f"Viscosidad Estimada a {t_obj} °C", f"{v_est} cP")
+        
+        if v_est > 500:
+            st.error("🔴 **ALTA VISCOSIDAD:** Riesgo de alta pérdida de carga en oleoductos y problemas de bombeo.")
+        elif v_est > 150:
+            st.warning("🟡 **VISCOSIDAD MODERADA:** Evaluar necesidad de calentamiento o diluyente.")
+        else:
+            st.success("🟢 **FLUIDEZ ÓPTIMA:** Condiciones favorables para transporte.")
+
+        # Curva Viscosidad vs Temperatura
+        temps = np.linspace(10, 90, 20)
+        viscs = [calcular_viscosidad_temperatura(v1, t1, v2, t2, t) for t in temps]
+        df_visc = pd.DataFrame({"Temperatura (°C)": temps, "Viscosidad (cP)": viscs})
+        
+        fig_v = px.line(df_visc, x="Temperatura (°C)", y="Viscosidad (cP)", title="Curva Viscosidad-Temperatura (ASTM D341)", markers=True)
+        st.plotly_chart(fig_v, use_container_width=True)
+
+# -----------------------------------------------------------------------------
+# MÓDULO 7: SALES EN CRUDO (PTB)
+# -----------------------------------------------------------------------------
+elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
+    st.markdown('<div class="main-header">🧂 Módulo de Determininación de Sales en Crudo (ASTM D3230)</div>', unsafe_allow_html=True)
+    
+    c_s1, c_s2 = st.columns(2)
+    
+    with c_s1:
+        st.subheader("Ensayo Electrométrico de Conductividad")
+        cond = st.number_input("Conductividad Medida en Celda (µS):", value=14.5, step=0.5)
+        k_fact = st.number_input("Factor de Calibración del Equipo:", value=0.85, step=0.01)
+        limite_sal = st.number_input("Límite de Entrega/Refinería (PTB):", value=10.0, step=1.0)
+        
+    with c_s2:
+        ptb, mg_l = calcular_ptb_sales(cond, k_fact)
+        
+        st.metric("Contenido de Sales (PTB)", f"{ptb} lb/1000 bbl")
+        st.metric("Concentración Equivalente", f"{mg_l} mg/L NaCl")
+        
+        if ptb <= limite_sal:
+            st.success(f"🟢 **CONFORME:** Salinidad dentro del límite contractual (≤ {limite_sal} PTB).")
+        else:
+            st.error(f"🔴 **FUERA DE ESPECIFICACIÓN:** Supera {limite_sal} PTB. Requiere lavado de sal en desalador de planta.")
