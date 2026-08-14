@@ -1,6 +1,7 @@
 import sys
 import os
 import io
+import base64
 
 # Inyección del directorio raíz al PATH
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -46,9 +47,63 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL
+# BARRA LATERAL CON LOGO ANIMADO
 # -----------------------------------------------------------------------------
-st.sidebar.image("https://img.icons8.com/color/96/petroleum-press.png", width=70)
+def get_image_base64(path):
+    """Carga y convierte una imagen local a Base64 para incrustación segura."""
+    if os.path.exists(path):
+        with open(path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode()
+    return None
+
+logo_b64 = get_image_base64(os.path.join(BASE_DIR, "assets", "logo_menfa.png"))
+
+if logo_b64:
+    img_src = f"data:image/png;base64,{logo_b64}"
+else:
+    # URL de respaldo con el ícono petroleum si aún no se guardó logo_menfa.png en assets/
+    img_src = "https://img.icons8.com/color/96/petroleum-press.png"
+
+st.sidebar.markdown(f"""
+    <style>
+    @keyframes float_menfa {{
+        0% {{
+            transform: translateY(0px) scale(1);
+            filter: drop-shadow(0 0 6px rgba(243, 112, 33, 0.4));
+        }}
+        50% {{
+            transform: translateY(-7px) scale(1.03);
+            filter: drop-shadow(0 8px 14px rgba(243, 112, 33, 0.7));
+        }}
+        100% {{
+            transform: translateY(0px) scale(1);
+            filter: drop-shadow(0 0 6px rgba(243, 112, 33, 0.4));
+        }}
+    }}
+
+    .animated-logo-container {{
+        text-align: center;
+        padding: 5px 0px 10px 0px;
+    }}
+
+    .animated-logo {{
+        width: 130px;
+        height: auto;
+        border-radius: 10px;
+        animation: float_menfa 3.5s ease-in-out infinite;
+        transition: transform 0.3s ease;
+    }}
+
+    .animated-logo:hover {{
+        transform: scale(1.08) rotate(2deg);
+    }}
+    </style>
+
+    <div class="animated-logo-container">
+        <img src="{img_src}" class="animated-logo" alt="MENFA CAPACITACIONES">
+    </div>
+""", unsafe_allow_html=True)
+
 st.sidebar.title("LAB-PETRO MENFA 2.0")
 
 st.sidebar.subheader("👤 Datos del Alumno")
@@ -227,6 +282,7 @@ elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
         ["Gravedad Específica (Aire=1)", f"{sg}", "0.55 - 0.75", "CONFORME"],
         ["Poder Calorífico Superior", f"{pcs} BTU/p³", "Min. 950 BTU/p³", "APTO COMERCIAL"]
     ], "Gas")
+
 # -----------------------------------------------------------------------------
 # MÓDULO 4: CONTROL DE CALIDAD ISO 17025
 # -----------------------------------------------------------------------------
