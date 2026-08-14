@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# LOGO MENFA - VERSIÓN HORIZONTAL FIJA
+# LOGO MENFA - VERSIÓN HORIZONTAL FIJA (SIN MOVIMIENTO)
 # -----------------------------------------------------------------------------
 st.sidebar.markdown("""
     <style>
@@ -250,8 +250,6 @@ elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
 
     with col2:
         st.subheader("📊 Propiedades Térmicas")
-        
-        # Llamada segura pasando los 5 parámetros nombrados
         pm, sg, pcs = calcular_propiedades_gas(c1=c1, c2=c2, c3=c3, co2=co2, n2=n2)
         
         m1, m2, m3 = st.columns(3)
@@ -322,10 +320,7 @@ elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
 
     with col2:
         st.subheader("📊 Balance Operativo")
-        
         efic = calcular_eficiencia_deshidratacion(bsw_entrada=bsw_in, bsw_salida=bsw_out)
-        
-        # Desempaquetado explícito de los 2 valores
         litros_d, costo_d = calcular_costo_tratamiento(
             dosis_ppm=dosis,
             caudal_m3d=caudal,
@@ -370,7 +365,6 @@ elif opcion_modulo == "6. Rheología y Viscosimetría de Crudos":
         st.metric("Viscosidad Estimada", f"{v_est} cP", delta=f"@ {t_obj} °C")
         st.info(f"**Categoría:** {cat}\n\n**Recomendación:** {rec}")
 
-        # Gráfico dinámico de perfil de temperatura
         temps = np.linspace(10, 80, 20)
         viscs = [calcular_viscosidad_temperatura(v1, t1, v2, t2, t) for t in temps]
         df_visc = pd.DataFrame({"Temperatura (°C)": temps, "Viscosidad (cP)": viscs})
