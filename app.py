@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL CON LOGO ANIMADO (NATIVO ENLINEA - OPTIMIZADO VERTICAL)
+# BARRA LATERAL CON LOGO ANIMADO (NATIVO ENLINEA - DISEÑO VERTICAL)
 # -----------------------------------------------------------------------------
 st.sidebar.markdown("""
     <style>
@@ -112,7 +112,6 @@ st.sidebar.markdown("""
         </svg>
     </div>
 """, unsafe_allow_html=True)
-
 st.sidebar.title("LAB-PETRO MENFA 2.0")
 
 st.sidebar.subheader("👤 Datos del Alumno")
