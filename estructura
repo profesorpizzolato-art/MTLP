@@ -1,11 +1,13 @@
-simulador_laboratorio_menfa/
-│
-├── app.py                      # Punto de entrada principal (Streamlit)
-├── requirements.txt            # Dependencias del proyecto
-│
-└── modules/                    # Módulos del sistema
-    ├── __init__.py
-    ├── modulo_crudo.py         # Cálculos API, Densidad, BS&W, Viscosidad
-    ├── modulo_agua.py          # Cálculos de SST, Salinidad, LSI, Agua de Inyección
-    ├── modulo_gas.py           # Cromatografía, MW, Gravedad Específica y PCS
-    └── modulo_calidad.py       # Gráficos de Shewhart e Integridad de Datos (ISO 17025)
+mtlp/
+├── app.py
+├── requirements.txt
+└── modules/
+    ├── __init__.py                <-- Archivo vacío (indispensable)
+    ├── modulo_crudo.py
+    ├── modulo_agua.py
+    ├── modulo_gas.py
+    ├── modulo_calidad.py
+    ├── modulo_emulsiones.py
+    ├── modulo_viscosidad.py       <-- Nombre en minúsculas
+    ├── modulo_salinidad.py
+    └── modulo_pdf.py
