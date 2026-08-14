@@ -5,3 +5,4 @@ source venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
 pip install -r requirements.txt
+pip install reportlab openpyxl pandas streamlit
