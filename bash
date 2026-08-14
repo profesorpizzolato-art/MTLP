@@ -14,3 +14,6 @@ git push origin main
 git add assets/logo_menfa.png app.py
 git commit -m "Add: Logo animado MENFA Capacitaciones en sidebar sin alterar logica"
 git push origin main
+git add assets/logo_menfa.png app.py
+git commit -m "Fix: Carga robusta del logo MENFA mediante st.sidebar.image con animaciones CSS"
+git push origin main
