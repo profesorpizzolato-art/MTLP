@@ -1,0 +1,24 @@
+import numpy as np
+
+def calcular_viscosidad_temperatura(v1, t1_c, v2, t2_c, t_objetivo_c):
+    """
+    Estima la viscosidad a una temperatura objetivo usando la ecuación de Walther/ASTM D341.
+    v1, v2 en cSt (o cP si la densidad es cercana a 1). T en °C.
+    """
+    t1_k = t1_c + 273.15
+    t2_k = t2_c + 273.15
+    t_obj_k = t_objetivo_c + 273.15
+
+    # Transformación Walther
+    w1 = np.log10(np.log10(v1 + 0.7))
+    w2 = np.log10(np.log10(v2 + 0.7))
+
+    # Pendiente (B) y Constante (A)
+    b = (w1 - w2) / (np.log10(t2_k) - np.log10(t1_k))
+    a = w1 + b * np.log10(t1_k)
+
+    # Viscosidad a la temperatura objetivo
+    w_obj = a - b * np.log10(t_obj_k)
+    v_obj = 10**(10**w_obj) - 0.7
+
+    return round(float(v_obj), 2)
