@@ -1,32 +1,31 @@
+# modules/modulo_calidad.py
 import numpy as np
-import plotly.graph_objects as go
 
-def generar_grafico_shewhart(valores_historicos, valor_referencia_mrc, desviacion_estandar):
+def generar_grafico_shewhart(n_muestras: int = 15, media_referencia: float = 28.5, std_dev: float = 0.3) -> tuple[list, float, float, float, float, float]:
     """
-    Genera un Gráfico de Control de Shewhart (ISO 17025) interactivo con Plotly.
+    Simula o procesa datos para una Carta de Control Shewhart (ISO 17025).
+    Retorna: (datos, media, ucl, lcl, uwl, lwl)
     """
-    lcs = valor_referencia_mrc + 3 * desviacion_estandar
-    lci = valor_referencia_mrc - 3 * desviacion_estandar
-    las = valor_referencia_mrc + 2 * desviacion_estandar
-    lai = valor_referencia_mrc - 2 * desviacion_estandar
+    try:
+        n_puntos = int(n_muestras)
+        media_ref = float(media_referencia)
+        s = float(std_dev)
+    except (ValueError, TypeError):
+        n_puntos, media_ref, s = 15, 28.5, 0.3
 
-    fig = go.Figure()
+    # Generación de datos sintéticos con semilla fija para reproducibilidad
+    np.random.seed(42)
+    datos = np.random.normal(media_ref, s, n_puntos)
+    
+    # Induce una desviación puntual controlada para fines pedagógicos
+    if n_puntos >= 9:
+        datos[8] = media_ref + (s * 3.1)
 
-    # Puntos medidos
-    muestras = list(range(1, len(valores_historicos) + 1))
-    fig.add_trace(go.Scatter(x=muestras, y=valores_historicos, mode='lines+markers', name='Valor Medido', line=dict(color='blue')))
-
-    # Líneas de Control
-    fig.add_hline(y=valor_referencia_mrc, line_dash="solid", line_color="green", annotation_text="Media (MRC)")
-    fig.add_hline(y=lcs, line_dash="dash", line_color="red", annotation_text="LCS (+3s)")
-    fig.add_hline(y=lci, line_dash="dash", line_color="red", annotation_text="LCI (-3s)")
-    fig.add_hline(y=las, line_dash="dot", line_color="orange", annotation_text="LAS (+2s)")
-    fig.add_hline(y=lai, line_dash="dot", line_color="orange", annotation_text="LAI (-2s)")
-
-    fig.update_layout(
-        title="Gráfico de Control de Shewhart (Aseguramiento de Calidad)",
-        xaxis_title="Número de Ensayo / Día",
-        yaxis_title="Resultado del MRC",
-        template="plotly_white"
-    )
-    return fig
+    ucl = media_ref + (3 * s)
+    lcl = media_ref - (3 * s)
+    uwl = media_ref + (2 * s)
+    lwl = media_ref - (2 * s)
+    
+    datos_lista = [round(float(x), 2) for x in datos]
+    
+    return datos_lista, round(media_ref, 2), round(ucl, 2), round(lcl, 2), round(uwl, 2), round(lwl, 2)
