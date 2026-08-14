@@ -195,6 +195,7 @@ elif opcion_modulo == "2. Agua: Tratamiento e Incrustación":
 elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
     st.markdown('<div class="main-header">🔥 Módulo 3: Cromatografía y Poder Calorífico de Gas</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
+    
     with col1:
         st.subheader("⚙️ Composición Molar (% mol)")
         c1 = st.slider("Metano (C1):", 50.0, 98.0, 85.0, 0.5)
@@ -205,7 +206,9 @@ elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
 
     with col2:
         st.subheader("📊 Propiedades Térmicas")
-        pm, sg, pcs = calcular_propiedades_gas(c1, c2, c3, co2, n2)
+        
+        # Llamada segura pasando los 5 parámetros nombrados
+        pm, sg, pcs = calcular_propiedades_gas(c1=c1, c2=c2, c3=c3, co2=co2, n2=n2)
         
         m1, m2, m3 = st.columns(3)
         m1.metric("PM Mezcla", f"{pm} g/mol")
@@ -224,7 +227,6 @@ elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
         ["Gravedad Específica (Aire=1)", f"{sg}", "0.55 - 0.75", "CONFORME"],
         ["Poder Calorífico Superior", f"{pcs} BTU/p³", "Min. 950 BTU/p³", "APTO COMERCIAL"]
     ], "Gas")
-
 # -----------------------------------------------------------------------------
 # MÓDULO 4: CONTROL DE CALIDAD ISO 17025
 # -----------------------------------------------------------------------------
