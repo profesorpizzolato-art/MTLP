@@ -56,9 +56,9 @@ opcion_modulo = st.sidebar.radio(
         "2. Agua: Tratamiento e Incrustación",
         "3. Gas Natural: Cromatografía y Mezcla",
         "4. Control de Calidad Dinámico (ISO 17025)",
-        "5. Emulsiones y Química Deshidratante"
-        "6. Rheología y Viscosimetría de Crudos",      
-        "7. Determinación de Sales en Crudo (PTB)"      
+        "5. Emulsiones y Química Deshidratante",
+        "6. Rheología y Viscosimetría de Crudos",
+        "7. Determinación de Sales en Crudo (PTB)"
     ]
 )
 
@@ -330,6 +330,7 @@ elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
             st.metric("Consumo Diario de Química", f"{vol_diario} L/día")
             st.metric("Gasto Diario Operativo", f"{costo_dia} USD/día")
             st.metric("OPEX Químico Específico", f"{costo_m3} USD/m³ crudo")
+
 # -----------------------------------------------------------------------------
 # MÓDULO 6: VISCOSIMETRÍA Y RHEOLOGÍA
 # -----------------------------------------------------------------------------
@@ -372,7 +373,7 @@ elif opcion_modulo == "6. Rheología y Viscosimetría de Crudos":
 # MÓDULO 7: SALES EN CRUDO (PTB)
 # -----------------------------------------------------------------------------
 elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
-    st.markdown('<div class="main-header">🧂 Módulo de Determininación de Sales en Crudo (ASTM D3230)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">🧂 Módulo de Determinación de Sales en Crudo (ASTM D3230)</div>', unsafe_allow_html=True)
     
     c_s1, c_s2 = st.columns(2)
     
