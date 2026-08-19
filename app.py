@@ -22,6 +22,9 @@ from modules.modulo_calidad import generar_grafico_shewhart
 from modules.modulo_emulsiones import calcular_eficiencia_deshidratacion, calcular_costo_tratamiento
 from modules.modulo_viscosidad import calcular_viscosidad_temperatura, evaluar_clasificacion_viscosidad
 from modules.modulo_salinidad import calcular_ptb_sales, evaluar_conforme_sales
+from modules.modulo_volatilidad import calcular_rvr_estimada, evaluar_flash_point
+from modules.modulo_sara import evaluar_estabilidad_asfaltenos
+from modules.modulo_evaluacion import generar_caso_examen
 from modules.modulo_pdf import generar_pdf_protocolo_analitico
 
 # Configuración de página
@@ -47,7 +50,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# LOGO OFICIAL MENFA - ARCHIVO LOCAL (logo_menfa.png)
+# LOGO OFICIAL MENFA
 # -----------------------------------------------------------------------------
 logo_path = os.path.join(BASE_DIR, "logo_menfa.png")
 
@@ -72,7 +75,10 @@ opcion_modulo = st.sidebar.radio(
         "4. Control de Calidad Dinámico (ISO 17025)",
         "5. Emulsiones y Química Deshidratante",
         "6. Rheología y Viscosimetría de Crudos",
-        "7. Determinación de Sales en Crudo (PTB)"
+        "7. Determinación de Sales en Crudo (PTB)",
+        "8. Volatilidad: Flash Point y Presión de Vapor (RVR)",
+        "9. Caracterización SARA y Estabilidad de Asfaltenos",
+        "10. Modo Evaluación / Examen Práctico"
     ]
 )
 
@@ -114,7 +120,7 @@ def exportar_reportes(resultados_tabla, prefijo_archivo):
         )
 
 # -----------------------------------------------------------------------------
-# MÓDULO 1: PETRÓLEO CRUDO
+# MÓDULOS 1 AL 7
 # -----------------------------------------------------------------------------
 if opcion_modulo == "1. Crudo: Deshidratación y Centrifugado":
     st.markdown('<div class="main-header">🧪 Módulo 1: Calidad de Crudo y Deshidratación</div>', unsafe_allow_html=True)
@@ -152,9 +158,6 @@ if opcion_modulo == "1. Crudo: Deshidratación y Centrifugado":
         ["BS&W Total", f"{bsw_total} %", f"Máx {limite_contrato}%", "APTO" if conforme else "RECHAZADO"]
     ], "Crudo")
 
-# -----------------------------------------------------------------------------
-# MÓDULO 2: AGUA DE INYECCIÓN
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "2. Agua: Tratamiento e Incrustación":
     st.markdown('<div class="main-header">💧 Módulo 2: Fisicoquímica de Agua e Índice de Langelier</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
@@ -163,7 +166,6 @@ elif opcion_modulo == "2. Agua: Tratamiento e Incrustación":
         vol_ml = st.number_input("Volumen Filtrado (mL):", 100, 1000, 500, 50)
         p_ini = st.number_input("Peso Filtro Seco (mg):", 100.0, 5000.0, 1050.0, 10.0)
         p_fin = st.number_input("Peso Filtro + Residuo (mg):", 100.0, 5000.0, 1085.0, 10.0)
-        
         st.markdown("---")
         ph = st.slider("pH del Agua:", 4.0, 10.0, 7.8, 0.1)
         temp_c = st.slider("Temperatura Operativa (°C):", 10.0, 90.0, 45.0, 1.0)
@@ -196,13 +198,9 @@ elif opcion_modulo == "2. Agua: Tratamiento e Incrustación":
         ["Índice de Langelier (LSI)", f"{lsi}", "-0.5 a +0.5", diag]
     ], "Agua")
 
-# -----------------------------------------------------------------------------
-# MÓDULO 3: GAS NATURAL
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
     st.markdown('<div class="main-header">🔥 Módulo 3: Cromatografía y Poder Calorífico de Gas</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
-    
     with col1:
         st.subheader("⚙️ Composición Molar (% mol)")
         c1 = st.slider("Metano (C1):", 50.0, 98.0, 85.0, 0.5)
@@ -214,16 +212,12 @@ elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
     with col2:
         st.subheader("📊 Propiedades Térmicas")
         pm, sg, pcs = calcular_propiedades_gas(c1=c1, c2=c2, c3=c3, co2=co2, n2=n2)
-        
         m1, m2, m3 = st.columns(3)
         m1.metric("PM Mezcla", f"{pm} g/mol")
         m2.metric("Grav. Específica", f"{sg}")
         m3.metric("PCS (Poder Cal.)", f"{pcs} BTU/p³")
 
-        df_croma = pd.DataFrame({
-            "Componente": ["Metano (C1)", "Etano (C2)", "Propano (C3)", "CO2", "N2"],
-            "Molar %": [c1, c2, c3, co2, n2]
-        })
+        df_croma = pd.DataFrame({"Componente": ["Metano (C1)", "Etano (C2)", "Propano (C3)", "CO2", "N2"], "Molar %": [c1, c2, c3, co2, n2]})
         fig_croma = px.bar(df_croma, x="Componente", y="Molar %", color="Componente", text_auto=True)
         st.plotly_chart(fig_croma, use_container_width=True)
 
@@ -233,9 +227,6 @@ elif opcion_modulo == "3. Gas Natural: Cromatografía y Mezcla":
         ["Poder Calorífico Superior", f"{pcs} BTU/p³", "Min. 950 BTU/p³", "APTO COMERCIAL"]
     ], "Gas")
 
-# -----------------------------------------------------------------------------
-# MÓDULO 4: CONTROL DE CALIDAD ISO 17025
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "4. Control de Calidad Dinámico (ISO 17025)":
     st.markdown('<div class="main-header">📈 Módulo 4: Gráficos de Control Shewhart (ISO 17025)</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 2])
@@ -248,16 +239,12 @@ elif opcion_modulo == "4. Control de Calidad Dinámico (ISO 17025)":
     with col2:
         st.subheader("📊 Carta de Control Analítica")
         datos, media, ucl, lcl, uwl, lwl = generar_grafico_shewhart(n_puntos, media_ref, desv_std)
-        
         fig_cc = go.Figure()
         x_axis = list(range(1, n_puntos + 1))
         fig_cc.add_trace(go.Scatter(x=x_axis, y=datos, mode='lines+markers', name='Lectura'))
         fig_cc.add_hline(y=media, line_dash="solid", line_color="green", annotation_text="Media")
         fig_cc.add_hline(y=ucl, line_dash="dash", line_color="red", annotation_text="UCL (+3s)")
         fig_cc.add_hline(y=lcl, line_dash="dash", line_color="red", annotation_text="LCL (-3s)")
-        fig_cc.add_hline(y=uwl, line_dash="dot", line_color="orange", annotation_text="UWL (+2s)")
-        fig_cc.add_hline(y=lwl, line_dash="dot", line_color="orange", annotation_text="LWL (-2s)")
-        
         st.plotly_chart(fig_cc, use_container_width=True)
 
     exportar_reportes([
@@ -266,13 +253,9 @@ elif opcion_modulo == "4. Control de Calidad Dinámico (ISO 17025)":
         ["Límite Inferior Control (LCL)", f"{lcl}", "-3s", "LÍMITE MÍN"]
     ], "Calidad")
 
-# -----------------------------------------------------------------------------
-# MÓDULO 5: EMULSIONES Y QUÍMICA DESHIDRATANTE
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
     st.markdown('<div class="main-header">🧪 Módulo 5: Dosificación Química y Tratamiento de Emulsiones</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
-    
     with col1:
         st.subheader("⚙️ Parámetros de Operación")
         bsw_in = st.slider("BS&W Entrada (Crudo Bruto %):", 5.0, 60.0, 25.0, 1.0)
@@ -284,21 +267,11 @@ elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
     with col2:
         st.subheader("📊 Balance Operativo")
         efic = calcular_eficiencia_deshidratacion(bsw_entrada=bsw_in, bsw_salida=bsw_out)
-        litros_d, costo_d = calcular_costo_tratamiento(
-            dosis_ppm=dosis,
-            caudal_m3d=caudal,
-            costo_litro_usd=costo_l
-        )
-        
+        litros_d, costo_d = calcular_costo_tratamiento(dosis_ppm=dosis, caudal_m3d=caudal, costo_litro_usd=costo_l)
         m1, m2, m3 = st.columns(3)
         m1.metric("Eficiencia", f"{efic}%")
         m2.metric("Consumo Química", f"{litros_d} L/día")
         m3.metric("Costo Diario", f"${costo_d} USD")
-
-        if efic >= 95.0:
-            st.success("✅ **TRATAMIENTO EFICIENTE Y OPTIMIZADO**")
-        else:
-            st.warning("⚠️ **INSUFICIENTE SEPARACIÓN**: Ajustar temperatura o dosis química")
 
     exportar_reportes([
         ["Eficiencia de Deshidratación", f"{efic} %", "Min 95.0 %", "ÓPTIMA" if efic >= 95 else "AJUSTAR"],
@@ -306,9 +279,6 @@ elif opcion_modulo == "5. Emulsiones y Química Deshidratante":
         ["Costo Operativo Diario", f"${costo_d} USD", "-", "EVALUADO"]
     ], "Emulsiones")
 
-# -----------------------------------------------------------------------------
-# MÓDULO 6: VISCOSIMETRÍA
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "6. Rheología y Viscosimetría de Crudos":
     st.markdown('<div class="main-header">🧪 Módulo 6: Viscosimetría y Curva Rheológica (ASTM D341)</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
@@ -324,30 +294,19 @@ elif opcion_modulo == "6. Rheología y Viscosimetría de Crudos":
         st.subheader("📊 Estimación de Fluidez")
         v_est = calcular_viscosidad_temperatura(v1, t1, v2, t2, t_obj)
         cat, rec = evaluar_clasificacion_viscosidad(v_est)
-        
         st.metric("Viscosidad Estimada", f"{v_est} cP", delta=f"@ {t_obj} °C")
         st.info(f"**Categoría:** {cat}\n\n**Recomendación:** {rec}")
-
-        temps = np.linspace(10, 80, 20)
-        viscs = [calcular_viscosidad_temperatura(v1, t1, v2, t2, t) for t in temps]
-        df_visc = pd.DataFrame({"Temperatura (°C)": temps, "Viscosidad (cP)": viscs})
-        fig_visc = px.line(df_visc, x="Temperatura (°C)", y="Viscosidad (cP)", markers=True)
-        st.plotly_chart(fig_visc, use_container_width=True)
 
     exportar_reportes([
         [f"Viscosidad a {t_obj}°C", f"{v_est} cP", "ASTM D341", cat],
         ["Diagnóstico de Bombeabilidad", cat, "-", rec]
     ], "Viscosidad")
 
-# -----------------------------------------------------------------------------
-# MÓDULO 7: SALES EN CRUDO
-# -----------------------------------------------------------------------------
 elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
     st.markdown('<div class="main-header">🧂 Módulo 7: Contenido de Sales Electrométrico (ASTM D3230)</div>', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
-    
     with col1:
-        st.subheader("⚙️ Parámetros de Mediciones Conductimétricas")
+        st.subheader("⚙️ Parámetros Conductimétricos")
         cond = st.number_input("Conductividad Medida (µS/cm):", 1.0, 500.0, 48.0, 1.0)
         temp_c = st.slider("Temperatura de Celda (°C):", 15.0, 40.0, 25.0, 0.5)
         lim_ptb = st.number_input("Límite de Entrega (PTB):", 1.0, 50.0, 10.0, 1.0)
@@ -356,17 +315,106 @@ elif opcion_modulo == "7. Determinación de Sales en Crudo (PTB)":
         st.subheader("📊 Resultado Analítico")
         ptb = calcular_ptb_sales(conductividad_uS=cond, temp_c=temp_c)
         es_conforme, msj = evaluar_conforme_sales(ptb_calculado=ptb, limite_ptb=lim_ptb)
-        
-        m1, m2 = st.columns(2)
-        m1.metric("Sales Totales", f"{ptb} PTB")
-        m2.metric("Límite Especificado", f"{lim_ptb} PTB")
-
+        st.metric("Sales Totales", f"{ptb} PTB")
         if es_conforme:
             st.success(f"✅ **{msj}**")
         else:
             st.error(f"🚨 **{msj}**")
 
     exportar_reportes([
-        ["Sales Totales (PTB)", f"{ptb} PTB", f"Máx {lim_ptb} PTB", "CONFORME" if es_conforme else "NO CONFORME"],
-        ["Conductividad Corregida", f"{cond} µS/cm", "@ 25°C", "EVALUADO"]
+        ["Sales Totales (PTB)", f"{ptb} PTB", f"Máx {lim_ptb} PTB", "CONFORME" if es_conforme else "NO CONFORME"]
     ], "Salinidad")
+
+# -----------------------------------------------------------------------------
+# NUEVO MÓDULO 8: VOLATILIDAD Y SEGURIDAD
+# -----------------------------------------------------------------------------
+elif opcion_modulo == "8. Volatilidad: Flash Point y Presión de Vapor (RVR)":
+    st.markdown('<div class="main-header">🔥 Módulo 8: Volatilidad y Seguridad (ASTM D93 / D323)</div>', unsafe_allow_html=True)
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.subheader("⚙️ Parámetros de Seguridad y Transf. Crudo")
+        api_val = st.slider("°API del Crudo:", 10.0, 50.0, 30.0, 0.5)
+        temp_op_f = st.slider("Temperatura de Operación (°F):", 50.0, 130.0, 80.0, 1.0)
+        flash_c = st.number_input("Punto de Inflamación Medido (°C):", -10.0, 100.0, 45.0, 1.0)
+        
+    with col2:
+        st.subheader("📊 Diagnóstico de Seguridad")
+        rvr_psi = calcular_rvr_estimada(api_val, temp_op_f)
+        apto_flash, cat_flash = evaluar_flash_point(flash_c)
+        
+        m1, m2 = st.columns(2)
+        m1.metric("Presión Vapor Reid (RVR)", f"{rvr_psi} psi")
+        m2.metric("Flash Point", f"{flash_c} °C")
+        
+        if apto_flash:
+            st.success(f"✅ **{cat_flash}**")
+        else:
+            st.error(f"🚨 **{cat_flash}**")
+
+    exportar_reportes([
+        ["Presión Vapor Reid (RVR)", f"{rvr_psi} psi", "Máx 12 psi", "OK" if rvr_psi <= 12 else "EXCEDIDO"],
+        ["Punto de Inflamación", f"{flash_c} °C", "Mín 60 °C", cat_flash]
+    ], "Volatilidad")
+
+# -----------------------------------------------------------------------------
+# NUEVO MÓDULO 9: CARACTERIZACIÓN SARA
+# -----------------------------------------------------------------------------
+elif opcion_modulo == "9. Caracterización SARA y Estabilidad de Asfaltenos":
+    st.markdown('<div class="main-header">🧬 Módulo 9: Caracterización SARA e Índice CII</div>', unsafe_allow_html=True)
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.subheader("⚙️ Composición SARA (% peso)")
+        sat = st.slider("Saturados (%):", 10.0, 80.0, 45.0, 1.0)
+        aro = st.slider("Aromáticos (%):", 10.0, 60.0, 30.0, 1.0)
+        res = st.slider("Resinas (%):", 1.0, 30.0, 15.0, 0.5)
+        asf = st.slider("Asfaltenos (%):", 0.1, 20.0, 10.0, 0.5)
+        
+    with col2:
+        st.subheader("📊 Estabilidad Coloidal")
+        cii, diag_sara = evaluar_estabilidad_asfaltenos(sat, aro, res, asf)
+        
+        st.metric("Índice Inestabilidad Coloidal (CII)", f"{cii}")
+        if cii < 0.7:
+            st.success(f"✅ {diag_sara}")
+        elif cii <= 0.9:
+            st.warning(f"⚠️ {diag_sara}")
+        else:
+            st.error(f"🚨 {diag_sara}")
+            
+        df_sara = pd.DataFrame({"Fracción": ["Saturados", "Aromáticos", "Resinas", "Asfaltenos"], "Porcentaje": [sat, aro, res, asf]})
+        fig_sara = px.pie(df_sara, names="Fracción", values="Porcentaje", title="Distribución SARA")
+        st.plotly_chart(fig_sara, use_container_width=True)
+
+    exportar_reportes([
+        ["Índice CII", f"{cii}", "< 0.70", diag_sara]
+    ], "SARA")
+
+# -----------------------------------------------------------------------------
+# NUEVO MÓDULO 10: MODO EVALUACIÓN
+# -----------------------------------------------------------------------------
+elif opcion_modulo == "10. Modo Evaluación / Examen Práctico":
+    st.markdown('<div class="main-header">📝 Módulo 10: Examen de Laboratorio / Caso Práctico</div>', unsafe_allow_html=True)
+    
+    if "caso_actual" not in st.session_state:
+        st.session_state.caso_actual = generar_caso_examen()
+        
+    if st.button("🔄 Generar Nuevo Caso de Examen"):
+        st.session_state.caso_actual = generar_caso_examen()
+        
+    caso = st.session_state.caso_actual
+    st.info(f"### **Caso N° {caso['id']}: {caso['titulo']}**")
+    
+    if caso["id"] == 1:
+        st.write(f"**°API Observado:** {caso['api_obs']} °API | **Temperatura:** {caso['temp_f']} °F")
+        st.write(f"**Lectura Tubo 1:** {caso['t1']} mL | **Lectura Tubo 2:** {caso['t2']} mL")
+        
+        ans_bsw = st.number_input("Ingrese su cálculo de BS&W Total (%):", 0.0, 10.0, 0.0, 0.01)
+        
+        if st.button("Enviar Respuesta"):
+            bsw_real = calcular_bsw(caso['t1'], caso['t2'])
+            if abs(ans_bsw - bsw_real) < 0.05:
+                st.success(f"🎉 **¡Correcto!** El BS&W calculado es {bsw_real}%.")
+            else:
+                st.error(f"❌ **Incorrecto.** Tu respuesta ({ans_bsw}%) difiere del resultado real ({bsw_real}%).")
