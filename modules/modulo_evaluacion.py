@@ -3,7 +3,7 @@ import random
 
 def generar_caso_examen():
     """
-    Genera parámetros aleatorios para un caso práctico de laboratorio.
+    Genera parámetros aleatorios para casos prácticos de laboratorio.
     """
     casos = [
         {
