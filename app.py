@@ -397,13 +397,14 @@ elif opcion_modulo == "9. Caracterización SARA y Estabilidad de Asfaltenos":
 elif opcion_modulo == "10. Modo Evaluación / Examen Práctico":
     st.markdown('<div class="main-header">📝 Módulo 10: Examen de Laboratorio / Caso Práctico</div>', unsafe_allow_html=True)
     
-    if "caso_actual" not in st.session_state:
+    # Si no existe o le falta la clave 'modulo' (por la versión anterior), forzamos regeneración
+    if "caso_actual" not in st.session_state or "modulo" not in st.session_state.caso_actual:
         st.session_state.caso_actual = generar_caso_examen()
         
     c_top1, c_top2 = st.columns([3, 1])
     with c_top1:
-        st.subheader(f"📌 {st.session_state.caso_actual['titulo']}")
-        st.caption(f"Módulo Evaluado: **{st.session_state.caso_actual['modulo']}**")
+        st.subheader(f"📌 {st.session_state.caso_actual.get('titulo', 'Caso Práctico')}")
+        st.caption(f"Módulo Evaluado: **{st.session_state.caso_actual.get('modulo', 'General')}**")
     with c_top2:
         if st.button("🎲 Siguiente Caso"):
             st.session_state.caso_actual = generar_caso_examen()
