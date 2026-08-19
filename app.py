@@ -47,7 +47,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# LOGO MENFA - VERSIÓN HORIZONTAL FIJA (SIN MOVIMIENTO)
+# LOGO MENFA - VERSIÓN HORIZONTAL FIJA (ESTÁTICA)
 # -----------------------------------------------------------------------------
 st.sidebar.markdown("""
     <style>
