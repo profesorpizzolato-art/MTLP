@@ -47,49 +47,54 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# LOGO MENFA - VERSIÓN HORIZONTAL FIJA (ESTÁTICA)
+# LOGO MENFA - VERSIÓN ENCODED EN BASE64 (SOLUCIÓN DEFINTIVA)
 # -----------------------------------------------------------------------------
-st.sidebar.markdown("""
-    <style>
-    .logo-menfa-container {
-        text-align: center;
-        padding: 10px 0px 15px 0px;
-        width: 100%;
-    }
+svg_code = """
+<svg viewBox="0 0 290 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#F37021;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+        </linearGradient>
+    </defs>
 
-    .logo-menfa-svg {
+    <!-- Escudo e Isotipo Oil & Gas (Llama / Torre) -->
+    <rect x="5" y="5" width="70" height="90" rx="14" fill="url(#gradBlue)" />
+    <path d="M 40 20 Q 60 50 40 70 Q 20 50 40 20 Z" fill="url(#gradOrange)" />
+    <circle cx="40" cy="75" r="4" fill="#FFFFFF" />
+
+    <!-- Texto MENFA y Subtítulos -->
+    <text x="90" y="50" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" letter-spacing="1">MENFA</text>
+    <text x="91" y="70" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="11.5" fill="#F37021" letter-spacing="2">CAPACITACIONES</text>
+    <text x="91" y="83" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="8.5" fill="#94A3B8" letter-spacing="1">OIL &amp; GAS TRAINING</text>
+</svg>
+"""
+
+# Conversión limpia a Base64 sin depender de archivos externos
+b64_logo = base64.b64encode(svg_code.encode('utf-8')).decode('utf-8')
+
+st.sidebar.markdown(f"""
+    <style>
+    .logo-container {{
+        text-align: center;
+        padding: 5px 0px 15px 0px;
         width: 100%;
-        max-width: 260px;
+    }}
+    .logo-img {{
+        width: 100%;
+        max-width: 250px;
         height: auto;
         display: block;
         margin: 0 auto;
-        filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
-    }
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }}
     </style>
-
-    <div class="logo-menfa-container">
-        <svg class="logo-menfa-svg" viewBox="0 0 290 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="gradOrange" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#F37021;stop-opacity:1" />
-                </linearGradient>
-                <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
-                </linearGradient>
-            </defs>
-
-            <!-- Escudo e Isotipo Oil & Gas (Llama / Torre) -->
-            <rect x="5" y="5" width="70" height="90" rx="14" fill="url(#gradBlue)" />
-            <path d="M 40 20 Q 60 50 40 70 Q 20 50 40 20 Z" fill="url(#gradOrange)" />
-            <circle cx="40" cy="75" r="4" fill="#FFFFFF" />
-
-            <!-- Texto MENFA y Subtítulos -->
-            <text x="90" y="50" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="34" fill="#FFFFFF" letter-spacing="1">MENFA</text>
-            <text x="91" y="70" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="11.5" fill="#F37021" letter-spacing="2">CAPACITACIONES</text>
-            <text x="91" y="83" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="8.5" fill="#94A3B8" letter-spacing="1">OIL &amp; GAS TRAINING</text>
-        </svg>
+    <div class="logo-container">
+        <img class="logo-img" src="data:image/svg+xml;base64,{b64_logo}" alt="IPCL MENFA Logo" />
     </div>
 """, unsafe_allow_html=True)
 
