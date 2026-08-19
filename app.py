@@ -392,7 +392,7 @@ elif opcion_modulo == "9. Caracterización SARA y Estabilidad de Asfaltenos":
     ], "SARA")
 
 # -----------------------------------------------------------------------------
-# MÓDULO 10: MODO EVALUACIÓN COMPLETO (CASOS 1 Y 2)
+# MÓDULO 10: MODO EVALUACIÓN / EXAMEN PRÁCTICO (30 CASOS DINÁMICOS)
 # -----------------------------------------------------------------------------
 elif opcion_modulo == "10. Modo Evaluación / Examen Práctico":
     st.markdown('<div class="main-header">📝 Módulo 10: Examen de Laboratorio / Caso Práctico</div>', unsafe_allow_html=True)
@@ -400,47 +400,32 @@ elif opcion_modulo == "10. Modo Evaluación / Examen Práctico":
     if "caso_actual" not in st.session_state:
         st.session_state.caso_actual = generar_caso_examen()
         
-    if st.button("🔄 Generar Nuevo Caso de Examen"):
-        st.session_state.caso_actual = generar_caso_examen()
-        
-    caso = st.session_state.caso_actual
-    st.info(f"### **Caso N° {caso['id']}: {caso['titulo']}**")
-    
-    # CASO 1: CRUDO Y BS&W
-    if caso["id"] == 1:
-        st.write(f"**°API Observado:** {caso['api_obs']} °API | **Temperatura:** {caso['temp_f']} °F")
-        st.write(f"**Lectura Tubo 1 (Agua+Sedimentó):** {caso['t1']} mL | **Lectura Tubo 2:** {caso['t2']} mL")
-        
-        ans_bsw = st.number_input("Ingrese su cálculo de BS&W Total (%):", 0.0, 10.0, 0.0, 0.01)
-        
-        if st.button("Enviar Respuesta Caso 1"):
-            bsw_real = calcular_bsw(caso['t1'], caso['t2'])
-            if abs(ans_bsw - bsw_real) < 0.05:
-                st.success(f"🎉 **¡Correcto!** El BS&W calculado es {bsw_real}%.")
-            else:
-                st.error(f"❌ **Incorrecto.** Tu respuesta ({ans_bsw}%) difiere del resultado real ({bsw_real}%).")
+    c_top1, c_top2 = st.columns([3, 1])
+    with c_top1:
+        st.subheader(f"📌 {st.session_state.caso_actual['titulo']}")
+        st.caption(f"Módulo Evaluado: **{st.session_state.caso_actual['modulo']}**")
+    with c_top2:
+        if st.button("🎲 Siguiente Caso"):
+            st.session_state.caso_actual = generar_caso_examen()
+            st.rerun()
 
-    # CASO 2: AGUA E ÍNDICE DE LANGELIER (LSI)
-    elif caso["id"] == 2:
-        col_c2_a, col_c2_b = st.columns(2)
-        with col_c2_a:
-            st.write(f"**pH del Agua:** {caso['ph']}")
-            st.write(f"**Temperatura Operativa:** {caso['temp_c']} °C")
-            st.write(f"**Sólidos Disueltos Totales (TDS):** {caso['tds']} ppm")
-        with col_c2_b:
-            st.write(f"**Calcio ($Ca^{{2+}}$):** {caso['ca_ppm']} ppm")
-            st.write(f"**Alcalinidad Total:** {caso['alk_ppm']} ppm")
+    caso = st.session_state.caso_actual
+    
+    st.info(f"**Enunciado:**\n\n{caso['enunciado']}")
+    st.markdown("---")
+    
+    ans_user = st.number_input(
+        f"👉 {caso['pregunta']} ({caso['unidad']}):",
+        value=0.0,
+        step=0.01,
+        format="%.2f"
+    )
+    
+    if st.button("📩 Enviar Respuesta para Calificación"):
+        val_real = caso["respuesta_correcta"]
+        tol = caso["tolerancia"]
         
-        st.markdown("---")
-        ans_lsi = st.number_input("Ingrese su cálculo de Índice de Langelier (LSI):", -5.0, 5.0, 0.0, 0.01)
-        
-        if st.button("Enviar Respuesta Caso 2"):
-            lsi_real, diag_real = calcular_indice_langelier(
-                caso['ph'], caso['temp_c'], caso['tds'], caso['ca_ppm'], caso['alk_ppm']
-            )
-            
-            # Tolerancia de +-0.1 por redondeos empíricos
-            if abs(ans_lsi - lsi_real) <= 0.1:
-                st.success(f"🎉 **¡Excelente!** El LSI es {lsi_real} ({diag_real}).")
-            else:
-                st.error(f"❌ **Revisar cálculo.** El LSI exacto es {lsi_real} ({diag_real}). Tu valor ingresado fue {ans_lsi}.")
+        if abs(ans_user - val_real) <= tol:
+            st.success(f"🎉 **¡RESPUESTA CORRECTA!**\n\n{caso['explicacion']}")
+        else:
+            st.error(f"❌ **RESPUESTA INCORRECTA.**\n\nTu valor: **{ans_user} {caso['unidad']}** | Valor esperado: **{val_real} {caso['unidad']}** (±{tol})\n\n**Explicación técnica:** {caso['explicacion']}")
